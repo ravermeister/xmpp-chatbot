@@ -111,7 +111,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
 				continue
-
+			print ">>>>> keyword " + keyword + "func >>" +  self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg) + "<<<<"
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
