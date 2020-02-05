@@ -83,7 +83,6 @@ class QueryBot(slixmpp.ClientXMPP):
 		for job in data['queue']:
 			keys = list(job.keys())
 			keyword = keys[0]
-			logging.info(">>>>>"+keyword)
 			target = job[keyword][0]
 			opt_arg = job[keyword][1]
 			queries = dict()
