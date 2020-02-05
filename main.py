@@ -118,8 +118,7 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			# if msg type is groupchat prepend mucnick
 			if msg["type"] == "groupchat":
-				data["reply"][0] = data["reply"][0]
-			#	data["reply"][0] = "%s: " % msg["mucnick"] + data["reply"][0]
+				data["reply"][0] = "%s: " % msg["mucnick"] + data["reply"][0]
 
 			# reply = misc.deduplicate(data['reply'])
 			reply = data["reply"]
