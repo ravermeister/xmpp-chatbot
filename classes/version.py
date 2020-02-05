@@ -18,7 +18,7 @@ class Version:
 		name = self.software_version['name']
 		version = self.software_version['version']
 		os = self.software_version['os']
-		if not os: os = 'an unknown Platform'
+		if not os: os = 'an unknown platform'
 		
 
 		# if opt_arg is given member of possible_opt_args list return that element
