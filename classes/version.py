@@ -29,8 +29,8 @@ class Version:
 
 		return text
 
-	def format(self, query, target, opt_arg):
-		self.software_version = query['software_version']
+	def format(self, queries, target, opt_arg):
+		self.software_version = queries['xep_0072']['software_version']
 
 		self.target = target
 		self.opt_arg = opt_arg

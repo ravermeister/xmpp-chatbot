@@ -21,6 +21,7 @@ from classes.servercontact import ServerContact
 from classes.version import Version
 from classes.uptime import LastActivity
 from classes.xep import XEPRequest
+from classes.info import ServerInfo
 
 
 class QueryBot(slixmpp.ClientXMPP):
@@ -35,6 +36,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			"!uptime": LastActivity(),
 			"!contact": ServerContact(),
 			"!version": Version(),
+			"!info": ServerInfo(),
 			"!xep": XEPRequest()
 		}
 
@@ -84,7 +86,7 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			target = job[keyword][0]
 			opt_arg = job[keyword][1]
-			query = None
+			queries = dict()
 
 			if keyword == '!help':
 				data['reply'].append(StaticAnswers().gen_help())
@@ -92,27 +94,33 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			try:
 				if keyword == "!uptime":
-					query = await self['xep_0012'].get_last_activity(jid=target)
+					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
 
 				elif keyword == "!version":
-					query = await self['xep_0092'].get_version(jid=target)
+					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 
 				elif keyword == "!contact":
-					query = await self['xep_0030'].get_info(jid=target, cached=False)
+					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
+
+				elif keyword == "!info":
+					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
+					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
+					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
 
 			except XMPPError as error:
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
 				continue
 
-			data["reply"].append(self.functions[keyword].format(query=query, target=target, opt_arg=opt_arg))
+			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
 		if list(filter(None.__ne__, data['reply'])) and data['reply']:
 
 			# if msg type is groupchat prepend mucnick
 			if msg["type"] == "groupchat":
-				data["reply"][0] = "%s: " % msg["mucnick"] + data["reply"][0]
+				data["reply"][0] = data["reply"][0]
+			#	data["reply"][0] = "%s: " % msg["mucnick"] + data["reply"][0]
 
 			# reply = misc.deduplicate(data['reply'])
 			reply = data["reply"]

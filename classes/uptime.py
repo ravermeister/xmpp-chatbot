@@ -40,8 +40,8 @@ class LastActivity:
 
 		return text
 
-	def format(self, query, target, opt_arg):
-		self.last_activity = query
+	def format(self, queries, target, opt_arg):
+		self.last_activity = queries['xep_0012']
 
 		self.target = target
 		self.opt_arg = opt_arg

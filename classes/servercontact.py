@@ -77,8 +77,8 @@ class ServerContact:
 
 			return result
 
-	def format(self, query, target, opt_arg):
-		self.contact = query
+	def format(self, queries, target, opt_arg):
+		self.contact = queries['xep_0157']
 
 		self.target = target
 		self.opt_arg = opt_arg
