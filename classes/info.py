@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import classes.servercontact
-import classes.version
-import classes.uptime 
+from classes.servercontact import ServerContact
+from classes.version import Version
+from classes.uptime import LastActivity
 
 # XEP-0012: Last Activity
 # XEP-0072: Server Version
@@ -22,9 +22,9 @@ class ServerInfo:
 		self.target = target
 		self.opt_arg = opt_arg
 		
-		srvUptime = uptime.LastActivity()
-		srvVersion = version.Version()
-		srvContact = servercontact.ServerContact()
+		srvUptime = LastActivity()
+		srvVersion = Version()
+		srvContact = ServerContact()
 
 		reply = srvUptime.format(queries=[queries['xep_0012']], target=self.target, opt_arg=self.opt_arg)
 		reply += "\n" + srvVersion.format(queries=[queries['xep_0072']], target=self.target, opt_arg=self.opt_arg)
