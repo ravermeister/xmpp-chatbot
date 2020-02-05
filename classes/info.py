@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import servercontact
-import  version
-import uptime 
+import classes.servercontact
+import classes.version
+import classes.uptime 
 
 # XEP-0012: Last Activity
 # XEP-0072: Server Version
