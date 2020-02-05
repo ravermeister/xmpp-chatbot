@@ -26,7 +26,7 @@ class ServerInfo:
 		srvVersion = Version()
 		srvContact = ServerContact()
 
-		reply += srvUptime.format(queries=queries, target=self.target, opt_arg=self.opt_arg)
+		reply = srvUptime.format(queries=queries, target=self.target, opt_arg=self.opt_arg)
 		reply += "\n" + srvVersion.format(queries=queries, target=self.target, opt_arg=self.opt_arg)
 		reply += "\n" + srvContact.format(queries=queries, target=self.target, opt_arg=self.opt_arg)
 
