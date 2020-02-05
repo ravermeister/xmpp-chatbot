@@ -72,10 +72,12 @@ class QueryBot(slixmpp.ClientXMPP):
 		# catch self messages to prevent self flooding
 		if msg['mucnick'] == self.nick:
 			return
-
-		elif self.nick in msg['body']:
+		
+		nickAdded = False
+		if self.nick in msg['body']:
 			# add pre predefined text to reply list
 			data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+			nickAdded = True
 
 		data = self.build_queue(data, msg)
 
@@ -117,7 +119,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		if list(filter(None.__ne__, data['reply'])) and data['reply']:
 
 			# if msg type is groupchat prepend mucnick
-			if msg["type"] == "groupchat":
+			if msg["type"] == "groupchat" and nickAdded == False:
 				data["reply"][0] = "%s: " % msg["mucnick"] + data["reply"][0]
 
 			# reply = misc.deduplicate(data['reply'])

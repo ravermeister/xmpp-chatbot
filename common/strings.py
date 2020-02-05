@@ -20,7 +20,8 @@ class StaticAnswers:
 			'1': 'I heard that, %s.',
 			'2': 'I am sorry for that %s.',
 			'3': '%s did you try turning it off and on again?',
-			'4': '%s Wie geht’s Deiner Frau und meinen Kindern?'
+			'4': '%s have a nice day',
+			'5': 'howdy %s'
 		}
 		self.error_messages = {
 			'1': 'not reachable',
