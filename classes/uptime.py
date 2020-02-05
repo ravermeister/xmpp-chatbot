@@ -36,7 +36,7 @@ class LastActivity:
 		result = ' '.join(uptime[:granularity])
 
 		# insert values into result string
-		text = "%s is running since %s" % (self.target, result)
+		text = "%s is running for %s" % (self.target, result)
 
 		return text
 

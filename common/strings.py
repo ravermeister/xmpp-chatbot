@@ -13,7 +13,7 @@ class StaticAnswers:
 			'version':	'!version domain.tld  -- receive XMPP server version',
 			'uptime':	'!uptime domain.tld -- receive XMPP server uptime',
 			'contact':	'!contact domain.tld -- receive XMPP server contact address info',
-			'info':		'!info domain.tld -- receive a Summary of the above infos',
+			'info':		'!info domain.tld -- receive a summary of the informations mentioned above',
 			'xep': 		'!xep XEP Number -- recieve information about the specified XEP'
 		}
 		self.possible_answers = {
