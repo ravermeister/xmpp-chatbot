@@ -27,8 +27,8 @@ class ServerInfo:
 		srvContact = ServerContact()
 
 		reply = "Server Information:" 
-		reply += "\n" + srvUptime.format(queries=[queries['xep_0012']], target=self.target, opt_arg=self.opt_arg)
-		reply += "\n" + srvVersion.format(queries=[queries['xep_0072']], target=self.target, opt_arg=self.opt_arg)
-		reply += "\n" + srvContact.format(queries=[queries['xep_0157']], target=self.target, opt_arg=self.opt_arg)
+		reply += "\n" + srvUptime.format(queries=queries, target=self.target, opt_arg=self.opt_arg)
+		reply += "\n" + srvVersion.format(queries=[queries, target=self.target, opt_arg=self.opt_arg)
+		reply += "\n" + srvContact.format(queries=[queries, target=self.target, opt_arg=self.opt_arg)
 
 		return reply
