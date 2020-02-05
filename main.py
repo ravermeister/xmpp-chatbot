@@ -83,7 +83,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		for job in data['queue']:
 			keys = list(job.keys())
 			keyword = keys[0]
-
+			logging.info(">>>>>"+keyword)
 			target = job[keyword][0]
 			opt_arg = job[keyword][1]
 			queries = dict()
@@ -107,12 +107,11 @@ class QueryBot(slixmpp.ClientXMPP):
 					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
 				
-				logger.info (">>>>> keyword " + keyword + "func >>" +  self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg) + "<<<<")
 			except XMPPError as error:
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
 				continue
-			logger.info (">>>>> keyword " + keyword + "func >>" +  self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg) + "<<<<")
+			
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
