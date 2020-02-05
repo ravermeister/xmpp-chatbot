@@ -104,7 +104,7 @@ class XEPRequest:
 
 		return result
 
-	def format(self, query, target, opt_arg):
+	def format(self, queries, target, opt_arg):
 		"""
 		:param target: number int or str to request the xep for
 		:return:
