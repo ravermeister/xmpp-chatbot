@@ -13,16 +13,16 @@ class StaticAnswers:
 			'version':	'!version domain.tld  -- receive XMPP server version',
 			'uptime':	'!uptime domain.tld -- receive XMPP server uptime',
 			'contact':	'!contact domain.tld -- receive XMPP server contact address info',
+			'info':		'!info domain.tld -- receive a Summary of the above infos',
 			'xep': 		'!xep XEP Number -- recieve information about the specified XEP'
 		}
 		self.possible_answers = {
 			'1': 'I heard that, %s.',
 			'2': 'I am sorry for that %s.',
-
 			'3': '%s did you try turning it off and on again?',
 			'4': 'Guten Tacho %s',
 			'5': 'Heroin-spaziert %s',
-			'6': '%s Wie geht’s Deiner Frau und meinen Kindern?',
+			'6': '%s Wie geht’s Deiner Frau und meinen Kindern?'
 		}
 		self.error_messages = {
 			'1': 'not reachable',
@@ -30,7 +30,7 @@ class StaticAnswers:
 		}
 		self.keywords = {
 			"keywords": ["!help", "!uptime", "!version", "!contact", "!xep"],
-			"domain_keywords": ["!uptime", "!version", "!contact"],
+			"domain_keywords": ["!uptime", "!version", "!contact", "!info"],
 			"no_arg_keywords": ["!help"],
 			"number_keywords": ["!xep"]
 		}
