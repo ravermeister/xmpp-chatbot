@@ -28,10 +28,11 @@ class StaticAnswers:
 			'2': 'not a valid target'
 		}
 		self.keywords = {
-			"keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep"],
+			"keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep", "!man"],
 			"domain_keywords": ["!uptime", "!version", "!contact", "!info"],
 			"no_arg_keywords": ["!help"],
-			"number_keywords": ["!xep"]
+			"number_keywords": ["!xep"],
+			"string_keywords": ["!man"]
 		}
 
 	def keys(self, key=""):

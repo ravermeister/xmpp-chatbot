@@ -2,7 +2,6 @@
 import validators
 from common.strings import StaticAnswers
 
-
 def deduplicate(reply):
 	"""
 	list deduplication method
@@ -24,6 +23,10 @@ def validate(keyword, target):
 	:param target: provided target
 	:return: true if valid
 	"""
+
+	## Maximum length for String arguments
+	MAX_STRING_ARG_LENGTH = 256
+	
 	# if keyword in domain_keywords list
 	if keyword in StaticAnswers().keys('domain_keywords'):
 		# if target is a domain / email return True
@@ -40,6 +43,14 @@ def validate(keyword, target):
 	# if keyword is in no_arg_keywords list return True
 	elif keyword in StaticAnswers().keys("no_arg_keywords"):
 		return True
+
+	# check if keyword is in string_keyword list		
+	elif keyword in StaticAnswers().keys("string_keywords"):				
+		return 	(
+			target is not None 
+			and type(target) == str 
+			and len(target) <= MAX_STRING_ARG_LENGTH
+		)
 
 	# if the target could not be validated until this return False
 	return False
