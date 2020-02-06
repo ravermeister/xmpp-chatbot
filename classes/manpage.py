@@ -10,9 +10,10 @@ class ManPageRequest:
 		self.target, self.opt_arg = None, None
 
 	def format(self, queries, target, opt_arg):
-		
 		self.target = target
 		self.opt_arg = opt_arg
 
-		reply = "display man page for %s is not yet implemented" % (self.target)
+		manurl = "https://man.cx/"
+		reply = manurl + self.target
+
 		return reply
