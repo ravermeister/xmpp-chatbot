@@ -14,5 +14,5 @@ class ManPageRequest:
 		self.target = target
 		self.opt_arg = opt_arg
 
-		reply = "display man page for %s is not yet implemented" % (self.opt_arg)
+		reply = "display man page for %s is not yet implemented" % (self.target)
 		return reply
