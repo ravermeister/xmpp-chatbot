@@ -109,7 +109,7 @@ class QueryBot(slixmpp.ClientXMPP):
 					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
 					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
-				
+			logging.info(">>>>>"+queries)	
 			except XMPPError as error:
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
