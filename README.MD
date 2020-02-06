@@ -36,8 +36,10 @@ rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tl
 nick=mucnickname
 ````
 
-##### systemd
-Copy the systemd dummy file into systemd service folder.
+#### systemd
+Copy the systemd dummy file into systemd service folder. Set the correct user for the daemon. 
+Keep in mind that the start command has to be adjustet for the virtualenv solution mentioned above
+
 `systemdctl daemon-reload` and `systemctl start magicbot.service` to start the bot.
 If it is neccecary to start the bot automatically when the system boots do `systemctl enable magicbot.service`.
 
