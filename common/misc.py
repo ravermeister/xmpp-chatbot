@@ -26,29 +26,36 @@ def validate(keyword, target):
 
 	## Maximum length for String arguments
 	MAX_STRING_ARG_LENGTH = 256
-	
+
 	# if keyword in domain_keywords list
 	if keyword in StaticAnswers().keys('domain_keywords'):
 		# if target is a domain / email return True
-		if validators.domain(target) or validators.email(target):
-			return True
-
+		return (
+			target is not None
+			and target.strip() is not None
+			and len(target) <= MAX_STRING_ARG_LENGTH
+			and (validators.domain(target) or validators.email(target))
+		)
 	# check if keyword is in number_keyword list
 	elif keyword in StaticAnswers().keys('number_keywords'):
 		# prevent AttributeError if target is NoneType
-		if target is not None:
+		return (
+			target is not None
+			and target.strip() is not None
+			and len(target) <= MAX_STRING_ARG_LENGTH
 			# if target only consists of digits return True
-			return target.isdigit()
+			and target.isdigit()
+		)
 
 	# if keyword is in no_arg_keywords list return True
 	elif keyword in StaticAnswers().keys("no_arg_keywords"):
 		return True
 
-	# check if keyword is in string_keyword list		
-	elif keyword in StaticAnswers().keys("string_keywords"):				
+	# check if keyword is in string_keyword list
+	elif keyword in StaticAnswers().keys("string_keywords"):
 		return 	(
-			target is not None 
-			and type(target) == str 
+			target is not None
+			and target.strip() is not None
 			and len(target) <= MAX_STRING_ARG_LENGTH
 		)
 
@@ -56,7 +63,7 @@ def validate(keyword, target):
 	return False
 
 
-#
+
 class HandleError:
 	"""
 	simple XMPP error / exception class formating the error condition
