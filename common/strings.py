@@ -14,7 +14,8 @@ class StaticAnswers:
 			'uptime':	'!uptime domain.tld -- receive XMPP server uptime',
 			'contact':	'!contact domain.tld -- receive XMPP server contact address info',
 			'info':		'!info domain.tld -- receive a summary of the informations mentioned above',
-			'xep': 		'!xep XEP Number -- recieve information about the specified XEP'
+			'xep': 		'!xep XEP Number -- recieve information about the specified XEP',
+			'man':		'!man manpage -- recieve information about the specified man page'
 		}
 		self.possible_answers = {
 			'1': 'I heard that, %s.',
