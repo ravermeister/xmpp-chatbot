@@ -94,8 +94,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			if keyword == '!help':
 				data['reply'].append(StaticAnswers().gen_help())
 				continue
-				
-			logging.info("before query >>>>>"+target+"<<<<<")	
+
 			try:
 				if keyword == "!uptime":
 					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
