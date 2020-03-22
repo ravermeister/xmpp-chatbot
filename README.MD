@@ -35,7 +35,6 @@ password=super_secret_password
 rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tld
 nick=mucnickname
 ````
-
 ##### systemd
 
 - copy the shell script `runbot` somewhere in the system and adjust the path to the xmpp-bot.
