@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /opt/xmppbot/xmpp-chatbot
+source ./venv/bin/activate
+./main.py

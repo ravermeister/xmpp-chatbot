@@ -1,0 +1,14 @@
+[Unit]
+  Description=SlixXMPP service bot
+  After=network.target ejabberd.service
+
+[Service]
+  Type=simple
+  ExecStart=/opt/xmppbot/runbot
+  Restart=on-failure
+  RestartSec=60s
+  User=xmppbot
+  Group=xmppbot
+
+[Install]
+  WantedBy=multi-user.target

@@ -37,9 +37,12 @@ nick=mucnickname
 ````
 
 ##### systemd
-Copy the systemd dummy file into systemd service folder.
-`systemdctl daemon-reload` and `systemctl start magicbot.service` to start the bot.
-If it is neccecary to start the bot automatically when the system boots do `systemctl enable magicbot.service`.
+
+- copy the shell script `runbot` somewhere in the system and adjust the path to the xmpp-bot.
+- adjust the path to the `runbot` script in `magicbot.service`.
+- link the `magicbot.service` file into systemd service folder.  `ln -s magicbot.service /etc/systemd/system/
+- `systemdctl daemon-reload` and `systemctl start magicbot.service` to start the bot.
+- if it is neccecary to start the bot automatically when the system boots do `systemctl enable magicbot.service`.
 
 #### starting the bot without systemd
 Got to the bots directory and run `./main.py &`.
