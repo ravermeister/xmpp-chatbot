@@ -19,7 +19,7 @@ class StaticAnswers:
 		}
 		self.possible_answers = {
 			'1': '%s möge die Macht mit dir sein',
-			'2': 'Ich weiß, sie mögen mich, ',
+			'2': 'Ich weiß %s, sie mögen mich, weil ich ein Schurke bin. Es gab leider nicht genug Schurken in ihrem Leben.',
 #			'3': 'Wenn das Universum ein helles Zentrum hat, bist du auf diesem Planeten am weitesten davon weg.',
 #			'4': 'Vor lauter Aufregung hat mein Partner einen Schaltkreiskollaps erlitten.',
 #			'5': 'Es würde gegen meine Programmierung verstoßen, eine Gottheit zu personifizieren.',
