@@ -23,7 +23,7 @@ class StaticAnswers:
 			'3': 'Wenn das Universum ein helles Zentrum hat, ist %s auf diesem Planeten am weitesten davon weg.',
 			'5': '%s es würde gegen meine Programmierung verstoßen, eine Gottheit zu personifizieren.',
 			'6': '%s nach meiner Erfahrung gibt es so etwas wie Glück nicht.',
-			'7': '$s ich finde ihren Mangel an Glauben beklagenswert.',
+			'7': '%s ich finde ihren Mangel an Glauben beklagenswert.',
 			'9': 'Ich bin Luke Skywalker. %s Ich bin hier, um Sie zu retten.',
 			'10': '%s vergiss nicht, die Macht wird mit dir sein, immer.',
 			'11': '%s das sind nicht die Droiden, die ihr sucht.',
