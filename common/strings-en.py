@@ -23,7 +23,7 @@ class StaticAnswers:
 			'3': '%s did you try turning it off and on again?',
 			'4': '%s have a nice day',
 			'5': 'howdy %s'
-			'6': 'Ich weiß, sie mögen mich, weil ich ein Schurke bin. Es gab leider nicht genug Schurken in ihrem Leben.'
+			'6': '%s may the force be with you'
 		}
 		self.error_messages = {
 			'1': 'not reachable',

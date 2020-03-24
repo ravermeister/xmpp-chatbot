@@ -21,6 +21,9 @@ With virtualenv it is possible to run the bot inside a virtual environment witho
 cd to_the_path/of_the_bot/
 mkdir ./venv
 
+# link the correct (localized) 'common/strings_*.py' file to 'common/strings.py'
+ln -s common/strings_de.py common/strings.py
+
 # create the virtual environment
 virtualenv -p $(which python3) ./venv
 source ./venv/bin/activate
@@ -38,8 +41,8 @@ rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tl
 nick=mucnickname
 ````
 ##### systemd
+Note, currently the scripts assume that the repo is stored in `/usr/local/share/xmpp-chatbot`
 
-- copy the shell script `runbot` somewhere in the system and adjust the path to the xmpp-bot.
 - adjust the path to the `runbot` script in `magicbot.service`.
 - link the `magicbot.service` file into systemd service folder.  `ln -s magicbot.service /etc/systemd/system/
 - `systemdctl daemon-reload` and `systemctl start magicbot.service` to start the bot.
