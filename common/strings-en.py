@@ -22,7 +22,7 @@ class StaticAnswers:
 			'2': 'I am sorry for that %s.',
 			'3': '%s did you try turning it off and on again?',
 			'4': '%s have a nice day',
-			'5': 'howdy %s'
+			'5': 'howdy %s',
 			'6': '%s may the force be with you'
 		}
 		self.error_messages = {
