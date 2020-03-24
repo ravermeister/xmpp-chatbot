@@ -63,3 +63,5 @@ target/
 bot\.cfg
 common/xeplist.xml
 common/.etag
+.bashrc
+.bash_history

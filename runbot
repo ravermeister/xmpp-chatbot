@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /opt/xmppbot/xmpp-chatbot
+cd /usr/local/share/xmpp-chatbot
 source ./venv/bin/activate
 ./main.py

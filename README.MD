@@ -7,9 +7,11 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - query xmpp server software and version [XEP-0092](https://xmpp.org/extensions/xep-0092.html)
 - query xmpp server uptime [XEP-0012](https://xmpp.org/extensions/xep-0012.html)
 - query xmpp server contact addresses [XEP-0157](https://xmpp.org/extensions/xep-0157.html)
+- display a summary of all of the above
 - display information about XEP from the [XSF extensions website](https://xmpp.org/extensions/)
 - display help output
 - respond to username being mentioned
+- query for a link to a man page
 
 ### install
 #### virtualenv

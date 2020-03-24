@@ -4,7 +4,7 @@
 
 [Service]
   Type=simple
-  ExecStart=/opt/xmppbot/runbot
+  ExecStart=/usr/local/share/xmpp-chatbot/runbot
   Restart=on-failure
   RestartSec=60s
   User=xmppbot
