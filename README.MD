@@ -49,4 +49,4 @@ Note, currently the scripts assume that the repo is stored in `/usr/local/share/
 - if it is neccecary to start the bot automatically when the system boots do `systemctl enable magicbot.service`.
 
 #### starting the bot without systemd
-Got to the bots directory and run `./main.py &`.
+Go to the bots directory and run `./main.py &`.
