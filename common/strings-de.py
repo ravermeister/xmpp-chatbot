@@ -73,13 +73,12 @@ class StaticAnswers:
 		apiUrl ="https://api.chucknorris.io/jokes/random"
 		if use_nick == 1:
 			apiUrl = "https://api.chucknorris.io/jokes/random?name=%s" % self.nickname
-		logging.debug("using Chuck Norris API URL: %s" % apiUrl)
 
 		apiRequest = request.Request(apiUrl)
 		apiRequest.add_header("accept", "application/json")
 		apiRespone = request.urlopen(apiRequest)
 		if apiResponse.status != 200:
-			logging.error("Error calling Chuck Norris API, return Code %s" % apiResponse.status)
+			self.error(self, 1)
 		return None
 
 		responseJson = json.loads(apiResponse.read())
