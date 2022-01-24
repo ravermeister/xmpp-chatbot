@@ -86,7 +86,7 @@ class StaticAnswers:
 		return responseJson["value"]
 
 	def gen_answer(self):
-		chucknorris_answer = gen_chucknorris_answer()
+		chucknorris_answer = self.gen_chucknorris_answer()
 		if chucknorris_answer != None and chucknorris_answer != "":
 			return chucknorris_answer
 
