@@ -65,7 +65,7 @@ class StaticAnswers:
 
 
 	def gen_answer(self):		
-		chucknorris_answer = chucknorris.answer_en2((randint(0,1) == 1))
+		chucknorris_answer = chucknorris.answer_en2(use_nick=(randint(0,1) == 1), nickname=self.nickname)
 		if chucknorris_answer != None and len(chucknorris_answer) > 0:
 			return chucknorris_answer
 
