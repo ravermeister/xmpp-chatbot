@@ -14,7 +14,7 @@ class Answers:
 	def answer_en2(self, use_nick=False, nickname=None):
 		apiUrl = self.api_en_2
 		if use_nick and nickname != None and len(nickname) > 0:
-			apiUrl = self.api2_en + "?name=%s" % nickname
+			apiUrl = apiUrl + "?name=%s" % nickname
 		logging.debug("using Chuck Norris API URL '%s'" % apiUrl)
 
 		try:
