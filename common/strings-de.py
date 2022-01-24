@@ -2,11 +2,11 @@
 # 24.01.2022 Jonny Rimkus <jonny@rimkus.it>
 # add method for Chuck Norris default answers
 
-import json
 import logging
+import requests
 
 from random import randint
-from urllib import request
+
 
 class StaticAnswers:
 	"""
@@ -75,13 +75,9 @@ class StaticAnswers:
 			apiUrl = "https://api.chucknorris.io/jokes/random?name=%s" % self.nickname
 		logging.debug("using Chuck Norris API URL '%s'" % apiUrl)
 
-		apiRequest = request.Request(apiUrl)
-		# apiRequest.add_header("accept", "application/json")
 		try:
-			apiRespone = request.urlopen(apiRequest)
-			if apiResponse.status == 200:
-				responseJson = json.loads(apiResponse.read())
-				return responseJson["value"]
+			responseJson = requests.get(apiRequest).json()
+			return responseJson["value"]
 		except Exception as error:
 			logging.error("Error Calling Chuck Norris API: %s" % error)
 		return None
