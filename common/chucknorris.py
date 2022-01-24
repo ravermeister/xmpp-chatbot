@@ -12,7 +12,7 @@ class Answers:
 		self.api_de_1 = "https://chuck-norris-witze.de"
 		
 	def answer_en2(self, use_nick=False, nickname=None):
-		apiUrl = self.api2_en
+		apiUrl = self.api_en_2
 		if use_nick and nickname != None and len(nickname) > 0:
 			apiUrl = self.api2_en + "?name=%s" % nickname
 		logging.debug("using Chuck Norris API URL '%s'" % apiUrl)
