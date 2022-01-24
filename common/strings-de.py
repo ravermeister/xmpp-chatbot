@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from random import randint
-from common.chucknorris import Answers as chucknorris
+from common.chucknorris import Answers as ChuckNorrisAnswers
 
 class StaticAnswers:
 	"""
@@ -50,6 +50,8 @@ class StaticAnswers:
 			"number_keywords": ["!xep"],
 			"string_keywords": ["!man"]
 		}
+		self.chucknorris = ChuckNorrisAnswers()
+
 
 	def keys(self, key=""):
 		# if specific keyword in referenced return that
@@ -65,7 +67,7 @@ class StaticAnswers:
 
 
 	def gen_answer(self):		
-		chucknorris_answer = chucknorris.answer_en2(use_nick=(randint(0,1) == 1), nickname=self.nickname)
+		chucknorris_answer = self.chucknorris.answer_en2((randint(0,1) == 1), self.nickname)
 		if chucknorris_answer != None and len(chucknorris_answer) > 0:
 			return chucknorris_answer
 
