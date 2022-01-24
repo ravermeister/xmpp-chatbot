@@ -32,7 +32,7 @@ class StaticAnswers:
 			'12': '%s, Konfuzius sagt: Frauen und Würmer mit Warzen, sind schwer zu verarzten.',
 			'13': '%s benutz deine Fantasie, oder ich borg dir meine!',
 			'14': '%s glauben sie an Greenpeace? Also ich glaube an Greenpeace. Und Robert Hunter glaubt auch an Greenpeace. Und die armen Wale werden auch bald dran glauben müssen.',
-			'15': '%s uns fehlt nur noch ein Kampflied und Uniformen und im Knopfloch tragen wir eine rote Nelke, aber keine aus Plastik den die ist was für Clowns. Und Clowns sind in einer ganz anderen Gewerkschaft.',
+			'15': '%s uns fehlt nur noch ein Kampflied und Uniformen und im Knopfloch tragen wir eine rote Nelke, aber keine aus Plastik denn die ist was für Clowns. Und Clowns sind in einer ganz anderen Gewerkschaft.',
 			'16': '%s du hörst nur dein Erbsenhirn, wie es in deinem Kopf rumrollt!',
 			'17': '%s Es steht ihnen Frei, zu schreien und zu brüllen. Aber es wird sie niemand hören.',
 			'18': '%s ich steig nicht in ein Flugzeug.',
