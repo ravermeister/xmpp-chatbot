@@ -3,10 +3,9 @@
 # add method for Chuck Norris default answers
 
 import json
-import urllib.request
 
 from random import randint
-
+from urllib import request
 
 class StaticAnswers:
 	"""
