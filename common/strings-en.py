@@ -50,6 +50,13 @@ class StaticAnswers:
 		return helpdoc
 
 	def gen_answer(self):
+		# use first parameter False to suppress using nickname for the name in the answer, True otherwise
+	    # below we randomize if nickname should be used
+		# chucknorris_answer = self.chucknorris.answer_en2((randint(0,1) == 1), self.nickname)
+		chucknorris_answer = self.chucknorris.answer_en2(True, self.nickname)
+		if chucknorris_answer != None and len(chucknorris_answer) > 0:
+			return chucknorris_answer
+
 		possible_answers = self.possible_answers
 		return possible_answers[str(randint(1, possible_answers.__len__()))] % self.nickname
 
