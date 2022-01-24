@@ -6,12 +6,12 @@ import requests
 
 class Answers:
 
-	def __init__():
+	def __init__(self):
 		self.api_en_1 = "https://api.icndb.com/jokes/random"
 		self.api_en_2 = "https://api.chucknorris.io/jokes/random"
 		self.api_de_1 = "https://chuck-norris-witze.de"
 		
-	def answer_en2(nickname=None):
+	def answer_en2(self, nickname=None):
 		apiUrl = self.api2_en
 		if nickname != None and len(nickname) > 0:
 			apiUrl = self.api2_en + "?name=%s" % nickname
