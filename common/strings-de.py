@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+# 24.01.2022 Jonny Rimkus <jonny@rimkus.it>
+# add method for Chuck Norris default answers
+
+import json
+import urllib.request
+
 from random import randint
 
 
