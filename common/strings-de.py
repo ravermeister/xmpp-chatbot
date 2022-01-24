@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from random import randint
-from chucknorris import Answers as chucknorris
+from common.chucknorris import Answers as chucknorris
 
 class StaticAnswers:
 	"""
