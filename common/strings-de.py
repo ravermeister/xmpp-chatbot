@@ -62,10 +62,31 @@ class StaticAnswers:
 		helpdoc = "\n".join(['%s' % value for (_, value) in self.helpfile.items()])
 		return helpdoc
 
-	def gen_answer(self):
-		possible_answers = self.possible_answers
-		return possible_answers[str(randint(1, possible_answers.__len__()))] % self.nickname
+    def gen_chucknorris_answer():
+        use_nick = randint(0, 1)
+        apiUrl ="https://api.chucknorris.io/jokes/random"
+        if use_nick == 1:
+            apiUrl = "https://api.chucknorris.io/jokes/random?name=%s" % self.nickname
+        logging.debug("using Chuck Norris API URL: %s" % apiUrl)
 
+        apiRequest = request.Request(apiUrl)
+        apiRequest.add_header("accept", "application/json")        
+        apiRespone = request.urlopen(apiRequest)
+        if apiResponse.status != 200:
+            logging.error("Error calling Chuck Norris API, return Code %s" % apiResponse.status)
+            return None
+        
+        responseJson = json.loads(apiResponse.read())
+        return responseJson["value"]
+
+	def gen_answer(self):
+	    chucknorris_answer = gen_chucknorris_answer()
+	    if chucknorris_answer != None and chucknorris_answer != "":
+            return chucknorris_answer
+            
+        possible_answers = self.possible_answers
+   		return possible_answers[str(randint(1, possible_answers.__len__()))] % self.nickname
+    	
 	def error(self,code):
 		try:
 			text = self.error_messages[str(code)]
