@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-# 24.01.2022 Jonny Rimkus <jonny@rimkus.it>
-# add method for Chuck Norris default answers
-
-import logging
-import requests
 
 from random import randint
-
+from chucknorris import Answers as chucknorris
 
 class StaticAnswers:
 	"""
@@ -68,23 +63,10 @@ class StaticAnswers:
 		helpdoc = "\n".join(['%s' % value for (_, value) in self.helpfile.items()])
 		return helpdoc
 
-	def gen_chucknorris_answer(self):
-		use_nick = randint(0, 1)
-		apiUrl ="https://api.chucknorris.io/jokes/random"
-		if use_nick == 1:
-			apiUrl = "https://api.chucknorris.io/jokes/random?name=%s" % self.nickname
-		logging.debug("using Chuck Norris API URL '%s'" % apiUrl)
 
-		try:
-			responseJson = requests.get(apiUrl).json()
-			return responseJson["value"]
-		except Exception as error:
-			logging.error("Error Calling Chuck Norris API: %s" % error)
-		return None
-
-	def gen_answer(self):
-		chucknorris_answer = self.gen_chucknorris_answer()
-		if chucknorris_answer != None and chucknorris_answer != "":
+	def gen_answer(self):		
+		chucknorris_answer = chucknorris.answer_en2((randint(0,1) == 1))
+		if chucknorris_answer != None and len(chucknorris_answer) > 0:
 			return chucknorris_answer
 
 		possible_answers = self.possible_answers
