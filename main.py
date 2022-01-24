@@ -123,7 +123,6 @@ class QueryBot(slixmpp.ClientXMPP):
 		# remove None type from list and send all elements
 		reply = filter(None.__ne__, data['reply'])
 		if list(reply) and data['reply']:
-
 			# if msg type is groupchat prepend mucnick
 			if msg["type"] == "groupchat" and nickAdded == False:
 				data["reply"][0] = "%s: " % msg["mucnick"] + data["reply"][0]
