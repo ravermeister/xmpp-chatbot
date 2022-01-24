@@ -68,7 +68,7 @@ class StaticAnswers:
 		helpdoc = "\n".join(['%s' % value for (_, value) in self.helpfile.items()])
 		return helpdoc
 
-    def gen_chucknorris_answer():
+    def gen_chucknorris_answer(self):
         use_nick = randint(0, 1)
         apiUrl ="https://api.chucknorris.io/jokes/random"
         if use_nick == 1:
