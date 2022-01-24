@@ -76,7 +76,7 @@ class StaticAnswers:
 		logging.debug("using Chuck Norris API URL '%s'" % apiUrl)
 
 		apiRequest = request.Request(apiUrl)
-		apiRequest.add_header("accept", "application/json")
+		# apiRequest.add_header("accept", "application/json")
 		try:
 			apiRespone = request.urlopen(apiRequest)
 			if apiResponse.status == 200:
