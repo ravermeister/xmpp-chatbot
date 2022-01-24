@@ -76,7 +76,7 @@ class StaticAnswers:
 		logging.debug("using Chuck Norris API URL '%s'" % apiUrl)
 
 		try:
-			responseJson = requests.get(apiRequest).json()
+			responseJson = requests.get(apiUrl).json()
 			return responseJson["value"]
 		except Exception as error:
 			logging.error("Error Calling Chuck Norris API: %s" % error)
