@@ -118,11 +118,12 @@ class QueryBot(slixmpp.ClientXMPP):
 
 		nickAdded = False
 		# add pre predefined text to reply list
-		if self.nick in msg['body']:
-			data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
-			nickAdded = True
-		elif msg['type'] == "chat":
-			data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+		if not reply:
+			if self.nick in msg['body'] and not msg['type'] == "chat":
+				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+				nickAdded = True
+			elif msg['type'] == "chat":
+				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
 
 		# remove None type from list and send all elements
 		reply = list(filter(None, data['reply']))			
