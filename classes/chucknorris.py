@@ -7,6 +7,31 @@ import requests
 from random import randint
 from html.parser import HTMLParser
 
+
+class ChuckNorrisParser(HTMLParser):
+
+	def initData(self):
+	    self.jokes = []
+	    self.resetTagSearch()
+
+	def resetTagSearch(self):
+	    self.article = False
+	    self.paragraph = False
+
+	def handle_starttag(self, tag, attrs):
+	    if(not self.article):
+	        self.article = (tag == "article")
+	    elif(self.article and not self.paragraph):
+	        self.paragraph = (tag == "p")
+
+	def handle_data(self, data):
+	    if(self.article and self.paragraph):
+	        self.jokes.append(data)
+	        self.resetTagSearch()
+
+	def get_jokes(self):
+	    return self.jokes
+
 class ChuckNorrisRequest:
 	"""
 	> retrieve a ChuckNorris Joke
@@ -58,29 +83,4 @@ class ChuckNorrisRequest:
 			return self.reply_de_1()
 		else:
 			return self.reply_en_1()
-	
-	
-	
-	class ChuckNorrisParser(HTMLParser):
 
-		def initData(self):
-		    self.jokes = []
-		    self.resetTagSearch()
-
-		def resetTagSearch(self):
-		    self.article = False
-		    self.paragraph = False
-
-		def handle_starttag(self, tag, attrs):
-		    if(not self.article):
-		        self.article = (tag == "article")
-		    elif(self.article and not self.paragraph):
-		        self.paragraph = (tag == "p")
-
-		def handle_data(self, data):
-		    if(self.article and self.paragraph):
-		        self.jokes.append(data)
-		        self.resetTagSearch()
-
-		def get_jokes(self):
-		    return self.jokes
