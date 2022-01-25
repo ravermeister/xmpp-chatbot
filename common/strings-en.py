@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from random import randint
 
-
 class StaticAnswers:
 	"""
 	collection of callable static/ semi-static strings
@@ -15,7 +14,9 @@ class StaticAnswers:
 			'contact':	'!contact domain.tld -- receive XMPP server contact address info',
 			'info':		'!info domain.tld -- receive a summary of the informations mentioned above',
 			'xep': 		'!xep XEP Number -- recieve information about the specified XEP',
-			'man':		'!man manpage -- recieve information about the specified man page'
+			'man':		'!man manpage -- recieve information about the specified man page',
+			'chuck':	'!chuck en -- tell a Chuck Norris Joke'
+			
 		}
 		self.possible_answers = {
 			'1': 'I heard that, %s.',
@@ -50,13 +51,6 @@ class StaticAnswers:
 		return helpdoc
 
 	def gen_answer(self):
-		# use first parameter False to suppress using nickname for the name in the answer, True otherwise
-	    # below we randomize if nickname should be used
-		# chucknorris_answer = self.chucknorris.answer_en2((randint(0,1) == 1), self.nickname)
-		chucknorris_answer = self.chucknorris.answer_en2(True, self.nickname)
-		if chucknorris_answer != None and len(chucknorris_answer) > 0:
-			return chucknorris_answer
-
 		possible_answers = self.possible_answers
 		return possible_answers[str(randint(1, possible_answers.__len__()))] % self.nickname
 

@@ -23,6 +23,7 @@ from classes.uptime import LastActivity
 from classes.xep import XEPRequest
 from classes.info import ServerInfo
 from classes.manpage import ManPageRequest
+from classes.chucknorris import ChuckNorrisRequest
 
 
 class QueryBot(slixmpp.ClientXMPP):
@@ -39,7 +40,8 @@ class QueryBot(slixmpp.ClientXMPP):
 			"!version": Version(),
 			"!info": ServerInfo(),
 			"!xep": XEPRequest(),
-			"!man": ManPageRequest()
+			"!man": ManPageRequest(),
+			"!chuck": ChuckNorrisRequest()
 		}
 
 		# session start event, starting point for the presence and roster requests
