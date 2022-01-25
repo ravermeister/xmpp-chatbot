@@ -116,6 +116,9 @@ class QueryBot(slixmpp.ClientXMPP):
 				
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
+		# remove None type from list and send all elements
+		reply = list(filter(None, data['reply']))		
+		
 		nickAdded = False
 		# add pre predefined text to reply list
 		if not reply:
@@ -126,7 +129,8 @@ class QueryBot(slixmpp.ClientXMPP):
 				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
 
 		# remove None type from list and send all elements
-		reply = list(filter(None, data['reply']))			
+		reply = list(filter(None, data['reply']))	
+				
 		if reply:
 			# use bare jid as default receiver
 			msgto=msg['from'].bare
