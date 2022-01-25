@@ -80,12 +80,6 @@ class QueryBot(slixmpp.ClientXMPP):
 		if msg['mucnick'] == self.nick:
 			return
 
-		nickAdded = False
-		if self.nick in msg['body']:
-			# add pre predefined text to reply list
-			data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
-			nickAdded = True
-
 		data = self.build_queue(data, msg)
 
 		# queue
@@ -123,14 +117,33 @@ class QueryBot(slixmpp.ClientXMPP):
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
-		reply = list(filter(None, data['reply']))
+		reply = list(filter(None, data['reply']))		
+		
+		nickAdded = False
+		# add pre predefined text to reply list
+		if not reply:
+			if self.nick in msg['body'] and not msg['type'] == "chat":
+				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+				nickAdded = True
+			elif msg['type'] == "chat":
+				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+
+		# remove None type from list and send all elements
+		reply = list(filter(None, data['reply']))	
+				
 		if reply:
+			# use bare jid as default receiver
+			msgto=msg['from'].bare
 			# if msg type is groupchat prepend mucnick
 			if msg["type"] == "groupchat" and nickAdded == False:
 				reply[0] = "%s: " % msg["mucnick"] + reply[0]
-
+			# if msg type is chat do NOT use bare jid for receiver
+			elif msg['type'] == "chat":
+				msgto=msg['from']
+			
 			# reply = misc.deduplicate(reply)
-			self.send_message(mto=msg['from'].bare, mbody="\n".join(reply), mtype=msg['type'])
+			self.send_message(msgto, mbody="\n".join(reply), mtype=msg['type'])
+
 
 	def build_queue(self, data, msg):
 		# building the queue
