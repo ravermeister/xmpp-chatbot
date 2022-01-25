@@ -50,7 +50,6 @@ class StaticAnswers:
 			"number_keywords": ["!xep"],
 			"string_keywords": ["!man"]
 		}
-		self.chucknorris = ChuckNorrisAnswers()
 
 
 	def keys(self, key=""):
