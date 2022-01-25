@@ -81,10 +81,12 @@ class QueryBot(slixmpp.ClientXMPP):
 			return
 
 		nickAdded = False
-		if self.nick in msg['body']:
-			# add pre predefined text to reply list
-			data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
-			nickAdded = True
+		# add pre predefined text to reply list
+		if self.nick in msg['body']
+				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+				nickAdded = True
+		elif msg['type'] == "chat":
+			data['reply'].append(StaticAnswers().gen_answer())
 
 		data = self.build_queue(data, msg)
 
@@ -130,7 +132,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			# if msg type is groupchat prepend mucnick
 			if msg["type"] == "groupchat" and nickAdded == False:
 				reply[0] = "%s: " % msg["mucnick"] + reply[0]
-			elif msg["type"] == "chat":
+			elif msg['type'] == "chat":
 				msgto=msg['from']
 			
 			# reply = misc.deduplicate(reply)
