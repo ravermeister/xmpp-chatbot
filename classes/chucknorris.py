@@ -43,7 +43,7 @@ class ChuckNorrisRequest:
 		self.api_en_2 = "https://api.chucknorris.io/jokes/random"
 		self.api_de_1 = "https://chuck-norris-witze.de"
 
-	def reply_en_2():
+	def reply_en_2(self):
 		try:
 			apiUrl = self.api_en_2
 			responseJson = requests.get(apiUrl).json()
@@ -51,7 +51,7 @@ class ChuckNorrisRequest:
 		except Exception as error:
 			return "Error Calling Chuck Norris API: %s" % error
 
-	def reply_en_1():
+	def reply_en_1(self):
 		try:
 			apiUrl = self.api_en_1
 			responseJson = requests.get(apiUrl).json()
@@ -59,7 +59,7 @@ class ChuckNorrisRequest:
 		except Exception as error:
 			return "Error Calling Chuck Norris API: %s" % error
 
-	def reply_de_1():
+	def reply_de_1(self):
 		try:
 			urllib3.disable_warnings()
 			max_pages = 50
