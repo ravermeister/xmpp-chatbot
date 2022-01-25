@@ -82,7 +82,7 @@ class QueryBot(slixmpp.ClientXMPP):
 
 		nickAdded = False
 		# add pre predefined text to reply list
-		if self.nick in msg['body']
+		if self.nick in msg['body']:
 				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
 				nickAdded = True
 		elif msg['type'] == "chat":
