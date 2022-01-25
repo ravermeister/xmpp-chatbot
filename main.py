@@ -125,12 +125,16 @@ class QueryBot(slixmpp.ClientXMPP):
 		# remove None type from list and send all elements
 		reply = list(filter(None, data['reply']))
 		if reply:
+			# use bare jid as default
+			msgto=msg['from'].bare
 			# if msg type is groupchat prepend mucnick
 			if msg["type"] == "groupchat" and nickAdded == False:
 				reply[0] = "%s: " % msg["mucnick"] + reply[0]
-
+			elif msg["type"] == "chat":
+				msgto=msg['from']
+			
 			# reply = misc.deduplicate(reply)
-			self.send_message(mto=msg['from'].bare, mbody="\n".join(reply), mtype=msg['type'])
+			self.send_message(msgto, mbody="\n".join(reply), mtype=msg['type'])
 
 	def build_queue(self, data, msg):
 		# building the queue
