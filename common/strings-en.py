@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from random import randint
 
-
 class StaticAnswers:
 	"""
 	collection of callable static/ semi-static strings
@@ -15,7 +14,9 @@ class StaticAnswers:
 			'contact':	'!contact domain.tld -- receive XMPP server contact address info',
 			'info':		'!info domain.tld -- receive a summary of the informations mentioned above',
 			'xep': 		'!xep XEP Number -- recieve information about the specified XEP',
-			'man':		'!man manpage -- recieve information about the specified man page'
+			'man':		'!man manpage -- recieve information about the specified man page',
+			'chuck':	'!chuck en -- tell a Chuck Norris Joke'
+			
 		}
 		self.possible_answers = {
 			'1': 'I heard that, %s.',
@@ -30,11 +31,11 @@ class StaticAnswers:
 			'2': 'not a valid target'
 		}
 		self.keywords = {
-			"keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep", "!man"],
+			"keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep", "!man", "!chuck"],
 			"domain_keywords": ["!uptime", "!version", "!contact", "!info"],
 			"no_arg_keywords": ["!help"],
 			"number_keywords": ["!xep"],
-			"string_keywords": ["!man"]
+			"string_keywords": ["!man", "!chuck"]
 		}
 
 	def keys(self, key=""):
