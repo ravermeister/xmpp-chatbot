@@ -48,7 +48,7 @@ class StaticAnswers:
 			"domain_keywords": ["!uptime", "!version", "!contact", "!info"],
 			"no_arg_keywords": ["!help"],
 			"number_keywords": ["!xep"],
-			"string_keywords": ["!man"]
+			"string_keywords": ["!man", "!chuck"]
 		}
 
 
