@@ -44,7 +44,7 @@ class StaticAnswers:
 			'2': 'kein gültiges Ziel'
 		}
 		self.keywords = {
-			"keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep", "!man"],
+			"keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep", "!man", "!chuck"],
 			"domain_keywords": ["!uptime", "!version", "!contact", "!info"],
 			"no_arg_keywords": ["!help"],
 			"number_keywords": ["!xep"],
