@@ -80,5 +80,5 @@ class ChuckNorrisRequest:
 		self.opt_arg = opt_arg
 		if(self.target == "de"):
 			return self.reply_de_1()
-		else
+		else:
 			return self.reply_en_1()
