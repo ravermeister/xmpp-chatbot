@@ -1,0 +1,10 @@
+[General]
+# whether to reply with a private message when bot is triggered in a group chat yes|no
+reply_private=no
+[Account]
+jid=nick@domain.tld/querybot
+password=super_secret_password
+[MUC]
+rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tld
+nick=mucnickname
+
