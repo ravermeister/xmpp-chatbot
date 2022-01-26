@@ -215,7 +215,7 @@ if __name__ == '__main__':
 	
 	if "yes" == config.get('General', 'reply_private'):
 		reply_private = True
-	else
+	else:
 		reply_private = False
 	
 	logging.debug("reply private switch is: %s" % reply_private)
