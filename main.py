@@ -27,7 +27,7 @@ from classes.chucknorris import ChuckNorrisRequest
 
 
 class QueryBot(slixmpp.ClientXMPP):
-	def __init__(self, jid, password, room, nick, reply_private):
+	def __init__(self, jid, password, room, nick, reply_private=False):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
 		self.room = room
@@ -213,14 +213,15 @@ if __name__ == '__main__':
 	config = configparser.RawConfigParser()
 	config.read('./bot.cfg')
 	
+	args.reply_private = ("yes" == config.get('General', 'reply_private'))	
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
 	args.nick = config.get('MUC', 'nick')
-	args.reply_private = ("yes" == config.get('General', 'reply_private'))
+
 	
 	# init the bot and register used slixmpp plugins
-	xmpp = QueryBot(args.jid, args.password, args.room, args.nick)
+	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private)
 	xmpp.register_plugin('xep_0012')  # Last Activity
 	xmpp.register_plugin('xep_0030')  # Service Discovery
 	xmpp.register_plugin('xep_0045')  # Multi-User Chat
