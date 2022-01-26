@@ -212,9 +212,10 @@ if __name__ == '__main__':
 	# configfile
 	config = configparser.RawConfigParser()
 	config.read('./bot.cfg')
-	reply_private = ("yes" == config.get('General', 'reply_private')
+	
+	reply_private = "yes" == config.get('General', 'reply_private'
 	logging.debug("reply private switch is: %s" % reply_private)
-	args.reply_private = ("yes" == config.get('General', 'reply_private'))
+	args.reply_private = "yes" == config.get('General', 'reply_private')
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
