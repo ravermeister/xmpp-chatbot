@@ -27,13 +27,13 @@ from classes.chucknorris import ChuckNorrisRequest
 
 
 class QueryBot(slixmpp.ClientXMPP):
-	def __init__(self, jid, password, room, nick):
+	def __init__(self, jid, password, room, nick, reply_private=False):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
 		self.room = room
 		self.nick = nick
 		self.use_message_ids = True
-
+		self.reply_private = reply_private
 		self.functions = {
 			"!uptime": LastActivity(),
 			"!contact": ServerContact(),
@@ -134,15 +134,23 @@ class QueryBot(slixmpp.ClientXMPP):
 		if reply:
 			# use bare jid as default receiver
 			msgto=msg['from'].bare
-			# if msg type is groupchat prepend mucnick
-			if msg["type"] == "groupchat" and nickAdded == False:
+			# use original message type as default answer type
+			msgtype=msg['type']
+			
+			# if msg type is groupchat and reply private is False prepend mucnick
+			if msg["type"] == "groupchat" and self.reply_private == False and nickAdded == False:
 				reply[0] = "%s: " % msg["mucnick"] + reply[0]
-			# if msg type is chat do NOT use bare jid for receiver
+			# if msg type is groupchat and reply private is True answer as with private message
+			# do NOT use bare jid for receiver
+			elif msg["type"] == "groupchat" and self.reply_private == True
+				msgto=msg['from']
+				msgtype='chat'
+			# if msg type is chat (private) do NOT use bare jid for receiver
 			elif msg['type'] == "chat":
 				msgto=msg['from']
 			
 			# reply = misc.deduplicate(reply)
-			self.send_message(msgto, mbody="\n".join(reply), mtype=msg['type'])
+			self.send_message(msgto, mbody="\n".join(reply), mtype=msgtype)
 
 
 	def build_queue(self, data, msg):
@@ -203,6 +211,7 @@ if __name__ == '__main__':
 	# configfile
 	config = configparser.RawConfigParser()
 	config.read('./bot.cfg')
+	args.reply_private = ("yes" == config.get('General', 'reply_private'))
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
