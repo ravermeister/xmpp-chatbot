@@ -33,6 +33,9 @@ pip3 install -r requirements.txt
 #### configuration
 Replace the dummy `bot.cfg` file, filled with correct credentials/ parameters.
 ````cfg
+[General]
+# whether to reply with a private message when bot is triggered in a group chat yes|no
+reply_private=no
 [Account]
 jid=nick@domain.tld/querybot
 password=super_secret_password

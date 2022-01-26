@@ -1,5 +1,5 @@
 [General]
-# reply as private when bot is triggered in a group chat yes|no
+# whether to reply with a private message when bot is triggered in a group chat yes|no
 reply_private=no
 [Account]
 jid=nick@domain.tld/querybot
