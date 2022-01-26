@@ -213,12 +213,12 @@ if __name__ == '__main__':
 	config = configparser.RawConfigParser()
 	config.read('./bot.cfg')
 	
-	args.reply_private = ("yes" == config.get('General', 'reply_private'))
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
 	args.nick = config.get('MUC', 'nick')
-
+	args.reply_private = ("yes" == config.get('General', 'reply_private'))
+	
 	# init the bot and register used slixmpp plugins
 	xmpp = QueryBot(args.jid, args.password, args.room, args.nick)
 	xmpp.register_plugin('xep_0012')  # Last Activity
