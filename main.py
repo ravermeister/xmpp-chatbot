@@ -34,6 +34,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		self.nick = nick
 		self.use_message_ids = True
 		self.reply_private = reply_private
+		loggin.debug("reply private is configured to: %s" % self.reply_private)
 		self.functions = {
 			"!uptime": LastActivity(),
 			"!contact": ServerContact(),
@@ -211,7 +212,6 @@ if __name__ == '__main__':
 	# configfile
 	config = configparser.RawConfigParser()
 	config.read('./bot.cfg')
-	logging.debug("reply private is set to: %s" % config.get('General', 'reply_private'))
 	args.reply_private = ("yes" == config.get('General', 'reply_private'))
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
