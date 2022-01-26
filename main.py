@@ -142,7 +142,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				reply[0] = "%s: " % msg["mucnick"] + reply[0]
 			# if msg type is groupchat and reply private is True answer as with private message
 			# do NOT use bare jid for receiver
-			elif msg["type"] == "groupchat" and self.reply_private == True
+			elif msg["type"] == "groupchat" and self.reply_private == True:
 				msgto=msg['from']
 				msgtype='chat'
 			# if msg type is chat (private) do NOT use bare jid for receiver
