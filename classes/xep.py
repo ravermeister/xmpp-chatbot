@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import os
 import requests
 import defusedxml.ElementTree as Et
@@ -66,7 +66,10 @@ class XEPRequest:
 		"""
 		# all possible subtags grouped by location
 		last_revision_tags = ["date", "version", "initials", "remark"]
-		xep_tags = ["number", "title", "abstract", "type", "status", "approver", "shortname", "sig", "lastcall", "date", "version", "initials", "remark"]
+		xep_tags = [
+			"number", "title", "abstract", "type", "status", "approver",
+			"shortname", "sig", "lastcall", "date", "version", "initials", "remark"
+		]
 
 		# check if xeplist is accurate
 		self.req_xeplist()
@@ -106,7 +109,9 @@ class XEPRequest:
 
 	def format(self, queries, target, opt_arg):
 		"""
+		:param queries:
 		:param target: number int or str to request the xep for
+		:param opt_arg:
 		:return:
 		"""
 		self.reqxep = int(target)

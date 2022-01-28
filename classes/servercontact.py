@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 import defusedxml.ElementTree as Et
 
 
@@ -9,12 +9,14 @@ class ServerContact:
 	"""
 	def __init__(self):
 		# init all necessary variables
-		self.possible_vars = ['abuse-addresses',
-							'admin-addresses',
-							'feedback-addresses',
-							'sales-addresses',
-							'security-addresses',
-							'support-addresses']
+		self.possible_vars = [
+			'abuse-addresses',
+			'admin-addresses',
+			'feedback-addresses',
+			'sales-addresses',
+			'security-addresses',
+			'support-addresses'
+		]
 
 		self.contact = None
 		self.target, self.opt_arg = None, None
@@ -25,17 +27,24 @@ class ServerContact:
 		if the provided string > 2 characters the most likely key will be chosen
 		:return: completes the opt_arg to the most likely one
 		"""
-		# if opt_argument is smaller then 2 pass to prohibit multiple answers
+		# if opt_argument is smaller than 2 pass to prohibit multiple answers
 		if len(self.opt_arg) < 2:
 			pass
 
 		abbr = str(self.opt_arg)
-		possible_abbr = ["abuse-addresses", "admin-addresses", "feedback-addresses", "sales-addresses",
-			"security-addresses", "support-addresses"]
+		possible_abbr = [
+			"abuse-addresses",
+			"admin-addresses",
+			"feedback-addresses",
+			"sales-addresses",
+			"security-addresses",
+			"support-addresses"
+		]
 
 		# searches the best match in the list of possible_abbr and completes the opt_arg to that
 		self.opt_arg = [s for s in possible_abbr if s.startswith(abbr)][0]
 
+	# noinspection HttpUrlsUsage
 	def process(self):
 		# get etree from base xml
 		iq = Et.fromstring(str(self.contact))

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 
 # XEP-0012: Last Activity
 class LastActivity:
