@@ -60,8 +60,12 @@ target/
 
 # .idea
 .idea
-bot\.cfg
+
+# custom ignores
+bot.cfg
 common/xeplist.xml
 common/.etag
 .bashrc
 .bash_history
+strings.py
+

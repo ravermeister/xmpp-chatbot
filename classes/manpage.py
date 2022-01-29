@@ -1,4 +1,4 @@
-
+# coding=utf-8
 # Linux Manpages Request
 class ManPageRequest:
 	"""
@@ -12,7 +12,7 @@ class ManPageRequest:
 		self.target = target
 		self.opt_arg = opt_arg
 
-		manurl = "https://man.cx/"
-		reply = manurl + self.target
+		man_url = "https://man.cx/"
+		reply = man_url + self.target
 
 		return reply

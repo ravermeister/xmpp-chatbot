@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 import validators
 from common.strings import StaticAnswers
 
@@ -66,7 +66,7 @@ def validate(keyword, target):
 
 class HandleError:
     """
-    simple XMPP error / exception class formating the error condition
+    simple XMPP error / exception class formatting the error condition
     """
 
     def __init__(self, error, key, target):

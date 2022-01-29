@@ -1,4 +1,4 @@
-
+# coding=utf-8
 from random import randint
 
 
@@ -9,13 +9,14 @@ class StaticAnswers:
 
     def __init__(self, nick=""):
         self.nickname = nick
-        self.helpfile = {
+        self.help_file = {
             'help': '!help -- diese Hilfe Anzeigen',
             'version': '!version domain.tld  -- die XMPP Server Version anzeigen',
             'uptime': '!uptime domain.tld -- die XMPP Server Laufzeit anzeigen',
             'contact': '!contact domain.tld -- die XMPP Server Kontakt Informationen anzeigen',
-            'info': '!info domain.tld -- eine zusammenfassung der oberen funktionen',
-            'xep': '!xep XEP Number -- die Informationen über eine XMPP XEP Spezifkation anzeigen',
+            'info': '!info domain.tld -- eine zusammenfassung der oberen Funktionen',
+            'user': '!user online|registered -- die registrierten/online Benutzer anzeigen',
+            'xep': '!xep XEP Number -- die Informationen über eine XMPP XEP Spezifikation anzeigen',
             'man': '!man manpage -- einen Link zu der Man Page des angegeben Programms anzeigen',
             'chuck': '!chuck de -- einen ChuckNorris Witz erzählen'
         }
@@ -35,11 +36,11 @@ class StaticAnswers:
             '2': 'kein gültiges Ziel'
         }
         self.keywords = {
-            "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!xep", "!man", "!chuck"],
+            "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
             "domain_keywords": ["!uptime", "!version", "!contact", "!info"],
             "no_arg_keywords": ["!help"],
             "number_keywords": ["!xep"],
-            "string_keywords": ["!man", "!chuck"]
+            "string_keywords": ["!man", "!chuck", "!user"]
         }
 
     def keys(self, key=""):
@@ -51,8 +52,8 @@ class StaticAnswers:
         return self.keywords["keywords"]
 
     def gen_help(self):
-        helpdoc = "\n".join(['%s' % value for (_, value) in self.helpfile.items()])
-        return helpdoc
+        help_doc = "\n".join(['%s' % value for (_, value) in self.help_file.items()])
+        return help_doc
 
     def gen_answer(self):
         possible_answers = self.possible_answers

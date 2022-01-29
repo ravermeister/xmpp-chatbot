@@ -12,6 +12,7 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - display help output
 - respond to username being mentioned
 - query for a link to a man page
+- tell Chuck Norris jokes
 
 ### install
 #### virtualenv

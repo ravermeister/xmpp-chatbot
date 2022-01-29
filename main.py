@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# coding=utf-8
+
 """
 	James the MagicXMPP Bot
 	build with Slick XMPP Library
@@ -22,6 +23,7 @@ from classes.version import Version
 from classes.uptime import LastActivity
 from classes.xep import XEPRequest
 from classes.info import ServerInfo
+from classes.users import UserInfo
 from classes.manpage import ManPageRequest
 from classes.chucknorris import ChuckNorrisRequest
 
@@ -40,6 +42,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			"!contact": ServerContact(),
 			"!version": Version(),
 			"!info": ServerInfo(),
+			"!user": UserInfo(),
 			"!xep": XEPRequest(),
 			"!man": ManPageRequest(),
 			"!chuck": ChuckNorrisRequest()
@@ -51,6 +54,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		# register receive handler for both groupchat and normal message events
 		self.add_event_handler('message', self.message)
 
+	# noinspection PyUnusedLocal
 	def start(self, event):
 		"""
 		:param event -- An empty dictionary. The session_start event does not provide any additional data.
@@ -114,46 +118,46 @@ class QueryBot(slixmpp.ClientXMPP):
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
 				continue
-				
+
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
-		reply = list(filter(None, data['reply']))		
-		
-		nickAdded = False
+		reply = list(filter(None, data['reply']))
+
+		nick_added = False
 		# add pre predefined text to reply list
 		if not reply:
 			if self.nick in msg['body'] and not msg['type'] == "chat":
 				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
-				nickAdded = True
+				nick_added = True
 			elif msg['type'] == "chat":
 				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
 
 		# remove None type from list and send all elements
-		reply = list(filter(None, data['reply']))	
-				
+		reply = list(filter(None, data['reply']))
+
 		if reply:
 			# use bare jid as default receiver
-			msgto=msg['from'].bare
+			msg_to = msg['from'].bare
 			# use original message type as default answer type
-			msgtype=msg['type']
-			
+			msg_type = msg['type']
+
 			# if msg type is groupchat and reply private is False prepend mucnick
-			if msg["type"] == "groupchat" and self.reply_private == False and nickAdded == False:
+			if msg["type"] == "groupchat" and self.reply_private is False and nick_added is False:
 				reply[0] = "%s: " % msg["mucnick"] + reply[0]
 			# if msg type is groupchat and reply private is True answer as with private message
 			# do NOT use bare jid for receiver
-			elif msg["type"] == "groupchat" and self.reply_private == True:
-				msgto=msg['from']
-				msgtype='chat'
+			elif msg["type"] == "groupchat" and self.reply_private is True:
+				msg_to = msg['from']
+				msg_type = 'chat'
 			# if msg type is chat (private) do NOT use bare jid for receiver
 			elif msg['type'] == "chat":
-				msgto=msg['from']
-			
+				msg_to = msg['from']
+
 			# reply = misc.deduplicate(reply)
-			self.send_message(msgto, mbody="\n".join(reply), mtype=msgtype)
+			self.send_message(msg_to, mbody="\n".join(reply), mtype=msg_type)
 
-
+	# noinspection PyMethodMayBeStatic
 	def build_queue(self, data, msg):
 		# building the queue
 		# double splitting to exclude whitespaces
@@ -212,14 +216,13 @@ if __name__ == '__main__':
 	# configfile
 	config = configparser.RawConfigParser()
 	config.read('./bot.cfg')
-	
-	args.reply_private = ("yes" == config.get('General', 'reply_private'))	
+
+	args.reply_private = ("yes" == config.get('General', 'reply_private'))
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
 	args.nick = config.get('MUC', 'nick')
 
-	
 	# init the bot and register used slixmpp plugins
 	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private)
 	xmpp.register_plugin('xep_0012')  # Last Activity

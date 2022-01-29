@@ -1,4 +1,4 @@
-
+# coding=utf-8
 # XEP-0012: Last Activity
 class LastActivity:
 	"""
@@ -13,7 +13,7 @@ class LastActivity:
 		seconds = self.last_activity['last_activity']['seconds']
 		uptime = []
 
-		# touple with displayable time sections
+		# tuple with displayable time sections
 		intervals = (
 			('years', 31536000),  # 60 * 60 * 24 * 365
 			('weeks', 604800),  # 60 * 60 * 24 * 7

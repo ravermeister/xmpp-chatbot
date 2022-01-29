@@ -1,3 +1,4 @@
+# coding=utf-8
 from classes.servercontact import ServerContact
 from classes.version import Version
 from classes.uptime import LastActivity
