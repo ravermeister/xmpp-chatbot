@@ -107,7 +107,11 @@ class QueryBot(slixmpp.ClientXMPP):
 					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 
 				elif keyword == "!contact":
-					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
+					queries['xep_0157']['registered'] = await self['xep_0157'].create_command('get-registered-users-num')
+					queries['xep_0157']['online'] = await self['xep_0157'].create_command('get-online-users-list')
+
+				elif keyword == "!user":
+					queries['xep_0133'] = self['xep_0133']
 
 				elif keyword == "!info":
 					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
