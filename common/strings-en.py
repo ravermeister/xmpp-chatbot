@@ -15,7 +15,7 @@ class StaticAnswers:
             'uptime': '!uptime domain.tld -- receive XMPP server uptime',
             'contact': '!contact domain.tld -- receive XMPP server contact address info',
             'info': '!info domain.tld -- receive a summary of the informations mentioned above',
-            'user': '!user online|registered -- display registered/online user',
+            'user': '!user domain.tld -- display amount of registered user and list online user',
             'xep': '!xep XEP Number -- receive information about the specified XEP',
             'man': '!man manpage -- receive information about the specified man page',
             'chuck': '!chuck en -- tell a Chuck Norris Joke'
@@ -34,10 +34,10 @@ class StaticAnswers:
         }
         self.keywords = {
             "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
-            "domain_keywords": ["!uptime", "!version", "!contact", "!info"],
+            "domain_keywords": ["!uptime", "!version", "!contact", "!info", "!user"],
             "no_arg_keywords": ["!help"],
             "number_keywords": ["!xep"],
-            "string_keywords": ["!man", "!chuck", "!user"]
+            "string_keywords": ["!man", "!chuck"]
         }
 
     def keys(self, key=""):

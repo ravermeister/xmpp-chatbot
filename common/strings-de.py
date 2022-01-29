@@ -15,7 +15,7 @@ class StaticAnswers:
             'uptime': '!uptime domain.tld -- die XMPP Server Laufzeit anzeigen',
             'contact': '!contact domain.tld -- die XMPP Server Kontakt Informationen anzeigen',
             'info': '!info domain.tld -- eine zusammenfassung der oberen Funktionen',
-            'user': '!user online|registered -- die registrierten/online Benutzer anzeigen',
+            'user': '!user domain.tld -- die anzahl der registrierten anzeigen und die online Benutzer auflisten',
             'xep': '!xep XEP Number -- die Informationen über eine XMPP XEP Spezifikation anzeigen',
             'man': '!man manpage -- einen Link zu der Man Page des angegeben Programms anzeigen',
             'chuck': '!chuck de -- einen ChuckNorris Witz erzählen'
@@ -37,10 +37,10 @@ class StaticAnswers:
         }
         self.keywords = {
             "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
-            "domain_keywords": ["!uptime", "!version", "!contact", "!info"],
+            "domain_keywords": ["!uptime", "!version", "!contact", "!info", "!user"],
             "no_arg_keywords": ["!help"],
             "number_keywords": ["!xep"],
-            "string_keywords": ["!man", "!chuck", "!user"]
+            "string_keywords": ["!man", "!chuck"]
         }
 
     def keys(self, key=""):

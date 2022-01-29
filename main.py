@@ -107,11 +107,11 @@ class QueryBot(slixmpp.ClientXMPP):
 					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 
 				elif keyword == "!contact":
-					queries['xep_0157']['registered'] = await self['xep_0157'].create_command('get-registered-users-num')
-					queries['xep_0157']['online'] = await self['xep_0157'].create_command('get-online-users-list')
+					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
 
 				elif keyword == "!user":
-					queries['xep_0133'] = self['xep_0133']
+					queries['registered'] = await self['xep_0133'].get_registered_users_num(jid=target)
+					queries['online'] = await self['xep_0133'].get_online_users_list(jid=target)
 
 				elif keyword == "!info":
 					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
@@ -122,7 +122,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
 				continue
-
+			logging.debug("calling function '%s' for '%s'" % (self.functions[keyword], keyword))
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
@@ -237,6 +237,7 @@ if __name__ == '__main__':
 	xmpp.register_plugin('xep_0092')  # Software Version
 	xmpp.register_plugin('xep_0128')  # Service Discovery Extensions
 	xmpp.register_plugin('xep_0199')  # XMPP Ping
+	xmpp.register_plugin('xep_0133')  # Service Administration
 
 	# connect and start receiving stanzas
 	xmpp.connect()
