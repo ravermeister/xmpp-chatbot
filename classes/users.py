@@ -16,7 +16,7 @@ class UserInfo:
         self.xep_0050 = None
         self.target, self.opt_arg = None, None
 
-    # noinspection PyMethodMayBeStatic
+    # noinspection PyUnusedLocal
     def process(self, queries, target, opt_arg):
         self.xep_0050 = queries['xep_0133'].xmpp['xep_0050']
         self.response_func = queries['response_func']
@@ -34,6 +34,26 @@ class UserInfo:
             'error': self.users_error
         }
         queries['xep_0133'].get_online_users_num(jid=target, session=online_session)
+
+        # 'get-online-users-list', 'get-online-users', 'get-active-users', 'get-registered-users-list'
+        # online_list_session = {
+        #     'next': self.online_user_list,
+        #     'error': self.users_error
+        # }
+        # queries['xep_0133'].get_registered_users_list(jid=target, session=online_list_session)
+
+    # def online_user_list(self, iq, session):
+    #     """
+    #     Process the initial command result.
+    #
+    #     Arguments:
+    #         iq      -- The iq stanza containing the command result.
+    #         session -- A dictionary of data relevant to the command
+    #                    session. Additional, custom data may be saved
+    #                    here to persist across handler callbacks.
+    #     """
+    #     logging.debug("online user list response: %s" % iq.xml)
+    #     self.xep_0050.complete_command(session)
 
     def online_users(self, iq, session):
         """
@@ -84,7 +104,7 @@ class UserInfo:
         registered_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='registeredusersnum']/{jabber:x:data}value")
         if registered_users_elems:
             registered_users_num = registered_users_elems[0].text
-            self.response_data.append("Total Registered Users: %s" % registered_users_num)
+            self.response_data.append("Registered Users: %s" % registered_users_num)
         else:
             logging.warning("received invalid data in response for xep_0133 - get-registered-users-num")
             self.response_data.append("received invalid data in response")
@@ -104,7 +124,7 @@ class UserInfo:
                        session. Additional, custom data may be saved
                        here to persist across handler callbacks.
         """
-        error_text = "%s: %s" % (iq['error']['condition'], iq['error']['text'])
+        error_text = "%s %s" % (iq['error']['condition'], iq['error']['text'])
         logging.error("%s - %s" % (iq['error']['condition'], iq['error']['text']))
 
         # Terminate the command's execution and clear its session.
