@@ -3,6 +3,7 @@
 reply_private=no
 # list user who are allowed to call admin Commands e.g. "!user"
 admin_command_users=user@domain.tld
+
 [Account]
 jid=nick@domain.tld/querybot
 password=super_secret_password
