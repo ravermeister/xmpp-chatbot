@@ -71,6 +71,41 @@ class QueryBot(slixmpp.ClientXMPP):
 				# self.plugin['xep_0045'].join_muc_wait(rooms, self.nick, maxstanzas=0)
 				self.plugin['xep_0045'].join_muc(rooms, self.nick)
 
+	def send_response(self, reply_data, original_msg):
+
+		nick_added = False
+		# add pre predefined text to reply list
+		if not reply_data:
+			if self.nick in original_msg['body'] and not original_msg['type'] == "chat":
+				reply_data.append(StaticAnswers(original_msg['mucnick']).gen_answer())
+				nick_added = True
+			elif original_msg['type'] == "chat":
+				reply_data.append(StaticAnswers(original_msg['mucnick']).gen_answer())
+
+		# remove None type from list and send all elements
+		reply_data = list(filter(None, reply_data))
+
+		if reply_data:
+			# use bare jid as default receiver
+			msg_to = original_msg['from'].bare
+			# use original message type as default answer type
+			msg_type = original_msg['type']
+
+			# if msg type is groupchat and reply private is False prepend mucnick
+			if original_msg["type"] == "groupchat" and self.reply_private is False and nick_added is False:
+				reply_data[0] = "%s: " % original_msg["mucnick"] + reply_data[0]
+			# if msg type is groupchat and reply private is True answer as with private message
+			# do NOT use bare jid for receiver
+			elif original_msg["type"] == "groupchat" and self.reply_private is True:
+				msg_to = original_msg['from']
+				msg_type = 'chat'
+			# if msg type is chat (private) do NOT use bare jid for receiver
+			elif original_msg['type'] == "chat":
+				msg_to = original_msg['from']
+
+			# reply = misc.deduplicate(reply)
+			self.send_message(msg_to, mbody="\n".join(reply_data), mtype=msg_type)
+
 	async def message(self, msg):
 		"""
 		:param msg: received message stanza
@@ -86,7 +121,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			return
 
 		data = self.build_queue(data, msg)
-
+		keyword_occurred = False
 		# queue
 		for job in data['queue']:
 			keys = list(job.keys())
@@ -96,70 +131,51 @@ class QueryBot(slixmpp.ClientXMPP):
 			queries = dict()
 
 			if keyword == '!help':
+				keyword_occurred = True
 				data['reply'].append(StaticAnswers().gen_help())
 				continue
 
 			try:
 				if keyword == "!uptime":
+					keyword_occurred = True
 					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
 
 				elif keyword == "!version":
+					keyword_occurred = True
 					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 
 				elif keyword == "!contact":
+					keyword_occurred = True
 					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
 
-				elif keyword == "!user":
-					queries['registered'] = await self['xep_0133'].get_registered_users_num(jid=target)
-					queries['online'] = await self['xep_0133'].get_online_users_list(jid=target)
-
 				elif keyword == "!info":
+					keyword_occurred = True
 					queries['xep_0012'] = await self['xep_0012'].get_last_activity(jid=target)
 					queries['xep_0072'] = await self['xep_0092'].get_version(jid=target)
 					queries['xep_0157'] = await self['xep_0030'].get_info(jid=target, cached=False)
 
+				elif keyword == "!user":
+					keyword_occurred = True
+					queries['xep_0133'] = self['xep_0133']
+					queries['response_func'] = self.send_response
+					queries['original_msg'] = msg
+					self.functions[keyword].process(queries=queries, target=target, opt_arg=opt_arg)
+					continue
 			except XMPPError as error:
 				logging.info(misc.HandleError(error, keyword, target).report())
 				data['reply'].append(misc.HandleError(error, keyword, target).report())
 				continue
-			logging.debug("calling function '%s' for '%s'" % (self.functions[keyword], keyword))
+
 			data["reply"].append(self.functions[keyword].format(queries=queries, target=target, opt_arg=opt_arg))
 
 		# remove None type from list and send all elements
-		reply = list(filter(None, data['reply']))
+		reply_data = list(filter(None, data["reply"]))
 
-		nick_added = False
-		# add pre predefined text to reply list
-		if not reply:
-			if self.nick in msg['body'] and not msg['type'] == "chat":
-				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
-				nick_added = True
-			elif msg['type'] == "chat":
-				data['reply'].append(StaticAnswers(msg['mucnick']).gen_answer())
+		# do not send default answer if no response and keyword occurred
+		if not reply_data and keyword_occurred:
+			return
 
-		# remove None type from list and send all elements
-		reply = list(filter(None, data['reply']))
-
-		if reply:
-			# use bare jid as default receiver
-			msg_to = msg['from'].bare
-			# use original message type as default answer type
-			msg_type = msg['type']
-
-			# if msg type is groupchat and reply private is False prepend mucnick
-			if msg["type"] == "groupchat" and self.reply_private is False and nick_added is False:
-				reply[0] = "%s: " % msg["mucnick"] + reply[0]
-			# if msg type is groupchat and reply private is True answer as with private message
-			# do NOT use bare jid for receiver
-			elif msg["type"] == "groupchat" and self.reply_private is True:
-				msg_to = msg['from']
-				msg_type = 'chat'
-			# if msg type is chat (private) do NOT use bare jid for receiver
-			elif msg['type'] == "chat":
-				msg_to = msg['from']
-
-			# reply = misc.deduplicate(reply)
-			self.send_message(msg_to, mbody="\n".join(reply), mtype=msg_type)
+		self.send_response(data['reply'], msg)
 
 	# noinspection PyMethodMayBeStatic
 	def build_queue(self, data, msg):
@@ -238,6 +254,7 @@ if __name__ == '__main__':
 	xmpp.register_plugin('xep_0128')  # Service Discovery Extensions
 	xmpp.register_plugin('xep_0199')  # XMPP Ping
 	xmpp.register_plugin('xep_0133')  # Service Administration
+	# xmpp.register_plugin('xep_0050')  # Ad-Hoc Commands
 
 	# connect and start receiving stanzas
 	xmpp.connect()
