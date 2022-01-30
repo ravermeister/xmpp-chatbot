@@ -56,7 +56,7 @@ class StaticAnswers:
         admin_functions = [key[1:] for key in admin_functions]
         # noinspection DuplicatedCode
         help_items = self.help_file.items()
-        if from_user not in admin_users:
+        if from_user not in admin_users and from_user.bare not in admin_users:
             # remove admin commands from help
             filtered_keys = [key for key in self.help_file.keys() if key not in admin_functions]
             help_items = {key: self.help_file[key] for key in filtered_keys}.items()

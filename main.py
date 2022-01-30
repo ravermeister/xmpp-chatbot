@@ -136,7 +136,7 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			if keyword == '!help':
 				keyword_occurred = True
-				data['reply'].append(StaticAnswers().gen_help(msg['from'].bare, self.admin_users, self.admin_functions))
+				data['reply'].append(StaticAnswers().gen_help(msg['from'], self.admin_users, self.admin_functions))
 				continue
 			# user is not allowed to call admin Commands
 			elif keyword in self.admin_functions \
