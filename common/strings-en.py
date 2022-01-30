@@ -15,7 +15,7 @@ class StaticAnswers:
             'uptime': '!uptime domain.tld -- receive XMPP server uptime',
             'contact': '!contact domain.tld -- receive XMPP server contact address info',
             'info': '!info domain.tld -- receive a summary of the informations mentioned above',
-            'user': '!user domain.tld -- display amount of registered user and list online user',
+            'user': '!user domain.tld -- display amount of registered/online user',
             'xep': '!xep XEP Number -- receive information about the specified XEP',
             'man': '!man manpage -- receive information about the specified man page',
             'chuck': '!chuck en -- tell a Chuck Norris Joke'

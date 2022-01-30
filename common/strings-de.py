@@ -15,7 +15,7 @@ class StaticAnswers:
             'uptime': '!uptime domain.tld -- die XMPP Server Laufzeit anzeigen',
             'contact': '!contact domain.tld -- die XMPP Server Kontakt Informationen anzeigen',
             'info': '!info domain.tld -- eine zusammenfassung der oberen Funktionen',
-            'user': '!user domain.tld -- die anzahl der registrierten anzeigen und die online Benutzer auflisten',
+            'user': '!user domain.tld -- die anzahl der registrierten/online Benutzer auflisten',
             'xep': '!xep XEP Number -- die Informationen über eine XMPP XEP Spezifikation anzeigen',
             'man': '!man manpage -- einen Link zu der Man Page des angegeben Programms anzeigen',
             'chuck': '!chuck de -- einen ChuckNorris Witz erzählen'

@@ -8,12 +8,15 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - query xmpp server uptime [XEP-0012](https://xmpp.org/extensions/xep-0012.html)
 - query xmpp server contact addresses [XEP-0157](https://xmpp.org/extensions/xep-0157.html)
 - display a summary of all the above
-- display amount of registered users and list online users
+- display amount of registered and online users
 - display information about XEP from the [XSF extensions website](https://xmpp.org/extensions/)
 - display help output
 - respond to username being mentioned
 - query for a link to a man page
 - tell Chuck Norris jokes
+
+Note for display registered/online Users The Bot need's admin privileges on the Server which is queried.
+As [XEP-0133](https://xmpp.org/extensions/xep-0133.html) is used 
 
 ### install
 #### virtualenv
