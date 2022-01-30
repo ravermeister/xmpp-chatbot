@@ -21,7 +21,7 @@ As [XEP-0133](https://xmpp.org/extensions/xep-0133.html) is used
 ### install
 #### virtualenv
 With virtualenv it is possible to run the bot inside a virtual environment without disrupting other python processes
- and or dependencies. This repo comes with a `requirements.txt` to make the install process as easy as possible.
+ and or dependencies. This repo comes with a `requirements.txt` to make the installation process as easy as possible.
  ````bash
 cd to_the_path/of_the_bot/
 mkdir ./venv
@@ -41,12 +41,17 @@ Replace the dummy `bot.cfg` file, filled with correct credentials/ parameters.
 [General]
 # whether to reply with a private message when bot is triggered in a group chat yes|no
 reply_private=no
+# list user who are allowed to call admin Commands e.g. "!user"
+admin_command_users=user@domain.tld
+
 [Account]
 jid=nick@domain.tld/querybot
 password=super_secret_password
+
 [MUC]
 rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tld
 nick=mucnickname
+
 ````
 ##### systemd
 Note, currently the scripts assume that the repo is stored in `/usr/local/share/xmpp-chatbot`
@@ -54,7 +59,7 @@ Note, currently the scripts assume that the repo is stored in `/usr/local/share/
 - adjust the path to the `runbot` script in `magicbot.service`.
 - link the `magicbot.service` file into systemd service folder.  `ln -s magicbot.service /etc/systemd/system/
 - `systemdctl daemon-reload` and `systemctl start magicbot.service` to start the bot.
-- if it is neccecary to start the bot automatically when the system boots do `systemctl enable magicbot.service`.
+- if it is necessary to start the bot automatically when the system boots do `systemctl enable magicbot.service`.
 
 #### starting the bot without systemd
 Go to the bots directory and run `./main.py &`.

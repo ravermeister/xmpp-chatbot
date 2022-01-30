@@ -7,6 +7,7 @@ admin_command_users=user@domain.tld
 [Account]
 jid=nick@domain.tld/querybot
 password=super_secret_password
+
 [MUC]
 rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tld
 nick=mucnickname
