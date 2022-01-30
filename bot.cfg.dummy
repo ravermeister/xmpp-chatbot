@@ -2,7 +2,7 @@
 # whether to reply with a private message when bot is triggered in a group chat yes|no
 reply_private=no
 # list user who are allowed to call admin Commands e.g. "!user"
-admin_command_users=jonny@rimkus.it
+admin_command_users=user@domain.tld
 [Account]
 jid=nick@domain.tld/querybot
 password=super_secret_password
