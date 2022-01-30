@@ -139,7 +139,9 @@ class QueryBot(slixmpp.ClientXMPP):
 				data['reply'].append(StaticAnswers().gen_help(msg['from'].bare, self.admin_users, self.admin_functions))
 				continue
 			# user is not allowed to call admin Commands
-			elif keyword in self.admin_functions and msg['from'].bare not in self.admin_users:
+			elif keyword in self.admin_functions \
+				and msg['from'] not in self.admin_users \
+				and msg['from'].bare not in self.admin_users:
 				keyword_occurred = True
 				data['reply'].append(StaticAnswers().error(3) % keyword)
 				continue
