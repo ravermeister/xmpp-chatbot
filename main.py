@@ -4,7 +4,7 @@
 """
 	James the MagicXMPP Bot
 	build with Slick XMPP Library
-	Copyright (C) 2018 Nico Wellpott
+	Copyright (C) 2018 Nico Wellpott, 2022 Jonny Rimkus
 
 	See the file LICENSE for copying permission.
 """
@@ -29,13 +29,14 @@ from classes.chucknorris import ChuckNorrisRequest
 
 
 class QueryBot(slixmpp.ClientXMPP):
-	def __init__(self, jid, password, room, nick, reply_private=False):
+	def __init__(self, jid, password, room, nick, reply_private=False, admin_command_users=""):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
 		self.room = room
 		self.nick = nick
 		self.use_message_ids = True
 		self.reply_private = reply_private
+		self.admin_users = admin_command_users.split(sep=",")
 
 		self.functions = {
 			"!uptime": LastActivity(),
@@ -47,6 +48,9 @@ class QueryBot(slixmpp.ClientXMPP):
 			"!man": ManPageRequest(),
 			"!chuck": ChuckNorrisRequest()
 		}
+		self.admin_functions = [
+			"!user"
+		]
 
 		# session start event, starting point for the presence and roster requests
 		self.add_event_handler('session_start', self.start)
@@ -132,7 +136,12 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			if keyword == '!help':
 				keyword_occurred = True
-				data['reply'].append(StaticAnswers().gen_help())
+				data['reply'].append(StaticAnswers().gen_help(msg['from'].bare, self.admin_users, self.admin_functions))
+				continue
+			# user is not allowed to call admin Commands
+			elif keyword in self.admin_functions and msg['from'].bare not in self.admin_users:
+				keyword_occurred = True
+				data['reply'].append(StaticAnswers().error(3) % keyword)
 				continue
 
 			try:
@@ -238,13 +247,14 @@ if __name__ == '__main__':
 	config.read('./bot.cfg')
 
 	args.reply_private = ("yes" == config.get('General', 'reply_private'))
+	args.admin_command_users = config.get('General', 'admin_command_users')
 	args.jid = config.get('Account', 'jid')
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
 	args.nick = config.get('MUC', 'nick')
 
 	# init the bot and register used slixmpp plugins
-	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private)
+	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private, args.admin_command_users)
 	xmpp.register_plugin('xep_0012')  # Last Activity
 	xmpp.register_plugin('xep_0030')  # Service Discovery
 	xmpp.register_plugin('xep_0045')  # Multi-User Chat
