@@ -23,40 +23,30 @@ class UserInfo:
         self.original_msg = queries['original_msg']
         self.response_data = list()
 
-        register_session = {
-            'next': self.registered_users,
-            'error': self.users_error
-        }
-        queries['xep_0133'].get_registered_users_num(jid=target, session=register_session)
+        queries['xep_0133'].get_registered_users_num(jid=target, session={
+            'next': self.command_start,
+            'error': self.command_error,
+            'command': 'get-registered-users-num',
+            'send_response': False
+        })
 
-        online_session = {
-            'next': self.online_users,
-            'error': self.users_error
-        }
-        queries['xep_0133'].get_online_users_num(jid=target, session=online_session)
+        queries['xep_0133'].get_online_users_num(jid=target, session={
+            'next': self.command_start,
+            'error': self.command_error,
+            'command': 'get-online-users-num',
+            'send_response': False
+        })
 
         # doesn't work with my ejabberd 21.12
-    #     # 'get-online-users-list', 'get-online-users', 'get-active-users', 'get-registered-users-list'
-    #     online_list_session = {
-    #         'next': self.online_user_list,
-    #         'error': self.users_error
-    #     }
-    #     queries['xep_0133'].get_online_users(jid=target, session=online_list_session)
-    #
-    # def online_user_list(self, iq, session):
-    #     """
-    #     Process the initial command result.
-    #
-    #     Arguments:
-    #         iq      -- The iq stanza containing the command result.
-    #         session -- A dictionary of data relevant to the command
-    #                    session. Additional, custom data may be saved
-    #                    here to persist across handler callbacks.
-    #     """
-    #     logging.debug("online user list response: %s" % iq.xml)
-    #     self.xep_0050.complete_command(session)
+        # 'get-online-users-list', 'get-online-users', 'get-active-users', 'get-registered-users-list'
+        queries['xep_0133'].get_online_users(jid=target, session={
+            'next': self.command_start,
+            'error': self.command_error,
+            'command': 'get-online-users',
+            'send_response': True
+        })
 
-    def online_users(self, iq, session):
+    def command_start(self, iq, session):
         """
         Process the initial command result.
 
@@ -67,55 +57,42 @@ class UserInfo:
                        here to persist across handler callbacks.
         """
 
-        send_response = True
         if not self.response_data:
-            send_response = False
             self.response_data.append(" ")
 
-        # noinspection SpellCheckingInspection
-        online_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='onlineusersnum']/{jabber:x:data}value")
-        if online_users_elems:
-            online_users_num = online_users_elems[0].text
-            self.response_data.append("Online Users: %s" % online_users_num)
-        else:
-            logging.warning("received invalid data in response for xep_0133 - get-online-users-num")
-            self.response_data.append("received invalid data in response")
+        logging.debug("Command handler for: '%s'" % session['command'])
 
-        self.xep_0050.complete_command(session)
-        if send_response:
+        if session['command'] == 'get-registered-users-num':
+            # noinspection SpellCheckingInspection
+            registered_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='registeredusersnum']/{jabber:x:data}value")
+            if registered_users_elems:
+                registered_users_num = registered_users_elems[0].text
+                self.response_data.append("Registered Users: %s" % registered_users_num)
+            else:
+                logging.warning("received invalid data in response for xep_0133 - get-registered-users-num")
+                self.response_data.append("received invalid data in response")
+        elif session['command'] == 'get-online-users-num':
+            # noinspection SpellCheckingInspection
+            online_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='onlineusersnum']/{jabber:x:data}value")
+            if online_users_elems:
+                online_users_num = online_users_elems[0].text
+                self.response_data.append("Online Users: %s" % online_users_num)
+            else:
+                logging.warning("received invalid data in response for xep_0133 - get-online-users-num")
+                self.response_data.append("received invalid data in response")
+        elif session['command'] == 'get-online-users':
+            logging.debug("online user list response: %s" % iq.xml)
+
+        if session['send_response']:
             self.response_func(self.response_data, self.original_msg)
 
-    def registered_users(self, iq, session):
-        """
-        Process the initial command result.
-
-        Arguments:
-            iq      -- The iq stanza containing the command result.
-            session -- A dictionary of data relevant to the command
-                       session. Additional, custom data may be saved
-                       here to persist across handler callbacks.
-        """
-
-        send_response = True
-        if not self.response_data:
-            send_response = False
-            self.response_data.append(" ")
-
-        # noinspection SpellCheckingInspection
-        registered_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='registeredusersnum']/{jabber:x:data}value")
-        if registered_users_elems:
-            registered_users_num = registered_users_elems[0].text
-            self.response_data.append("Registered Users: %s" % registered_users_num)
-        else:
-            logging.warning("received invalid data in response for xep_0133 - get-registered-users-num")
-            self.response_data.append("received invalid data in response")
-
+        # Other options include using:
+        # continue_command() -- Continue to the next step in the workflow
+        # cancel_command()   -- Stop command execution.
         self.xep_0050.complete_command(session)
-        if send_response:
-            self.response_func(self.response_data, self.original_msg)
 
     # noinspection PyMethodMayBeStatic
-    def users_error(self, iq, session):
+    def command_error(self, iq, session):
         """
         Process an error that occurs during command execution.
 
@@ -125,13 +102,18 @@ class UserInfo:
                        session. Additional, custom data may be saved
                        here to persist across handler callbacks.
         """
-        error_text = "%s %s" % (iq['error']['condition'], iq['error']['text'])
-        logging.error("%s - %s" % (iq['error']['condition'], iq['error']['text']))
+        error_text = "%s: %s %s" % (session['command'], iq['error']['condition'], iq['error']['text'])
+        logging.error("%s" % error_text)
+
+        if not self.response_data:
+            self.response_data.append(" ")
+
+        self.response_data.append("%s" % error_text)
+
+        if session['send_response']:
+            self.response_func(self.response_data, self.original_msg)
 
         # Terminate the command's execution and clear its session.
         # The session will automatically be cleared if no error
         # handler is provided.
         self.xep_0050.terminate_command(session)
-        if error_text not in self.response_data:
-            self.response_data.append(error_text)
-            self.response_func(self.response_data, self.original_msg)
