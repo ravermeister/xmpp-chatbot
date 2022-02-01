@@ -35,13 +35,14 @@ class UserInfo:
         }
         queries['xep_0133'].get_online_users_num(jid=target, session=online_session)
 
-        # 'get-online-users-list', 'get-online-users', 'get-active-users', 'get-registered-users-list'
-        # online_list_session = {
-        #     'next': self.online_user_list,
-        #     'error': self.users_error
-        # }
-        # queries['xep_0133'].get_registered_users_list(jid=target, session=online_list_session)
-
+        # doesn't work with my ejabberd 21.12
+    #     # 'get-online-users-list', 'get-online-users', 'get-active-users', 'get-registered-users-list'
+    #     online_list_session = {
+    #         'next': self.online_user_list,
+    #         'error': self.users_error
+    #     }
+    #     queries['xep_0133'].get_online_users(jid=target, session=online_list_session)
+    #
     # def online_user_list(self, iq, session):
     #     """
     #     Process the initial command result.
