@@ -13,12 +13,14 @@ class UserInfo:
         self.response_func = None
         self.original_msg = None
         self.response_data = list()
+        self.xep_0030 = None
         self.xep_0050 = None
         self.target, self.opt_arg = None, None
 
     # noinspection PyUnusedLocal
     def process(self, queries, target, opt_arg):
         self.xep_0050 = queries['xep_0133'].xmpp['xep_0050']
+        self.xep_0030 = queries['xep_0030']
         self.response_func = queries['response_func']
         self.original_msg = queries['original_msg']
         self.response_data = list()
@@ -42,6 +44,7 @@ class UserInfo:
         queries['xep_0133'].get_online_users(jid=target, session={
             'next': self.command_start,
             'error': self.command_error,
+            'target': target,
             'command': 'get-online-users',
             'send_response': True
         })
@@ -108,7 +111,10 @@ class UserInfo:
         if not self.response_data:
             self.response_data.append(" ")
 
-        self.response_data.append("%s" % error_text)
+        if session['command'] == 'get-online-users':
+            self.fallback_onlineusers_ejabberd(session)
+        else:
+            self.response_data.append("%s" % error_text)
 
         if session['send_response']:
             self.response_func(self.response_data, self.original_msg)
@@ -117,3 +123,27 @@ class UserInfo:
         # The session will automatically be cleared if no error
         # handler is provided.
         self.xep_0050.terminate_command(session)
+
+    def fallback_onlineusers_ejabberd(self, session):
+        """
+        fallback for get-online-users in ejabberd
+        """
+        logging.debug("fallback method for ejabberd for get online user list")
+
+        self.xep_0030.get_items(
+            jid=session['target'],
+            node='online users',
+            callback=self.fallback_onlineusers_ejabberd_callback_handler
+        )
+
+    def fallback_onlineusers_ejabberd_callback_handler(self, iq):
+        # noinspection HttpUrlsUsage
+        response = iq.xml.findall(".//{http://jabber.org/protocol/disco#items}item")
+        for user in response:
+            user_jid = user.get("jid")
+            user_split = user_jid.split("/")
+            user_name = user_split[0]
+            user_app = user_split[1].split(".")[0]
+            self.response_data.append("%s using %s" % (user_name, user_app))
+
+        self.response_func(self.response_data, self.original_msg)

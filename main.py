@@ -168,6 +168,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				elif keyword == "!user":
 					keyword_occurred = True
 					queries['xep_0133'] = self['xep_0133']
+					queries['xep_0030'] = self['xep_0030']
 					queries['response_func'] = self.send_response
 					queries['original_msg'] = msg
 					self.functions[keyword].process(queries=queries, target=target, opt_arg=opt_arg)
