@@ -11,19 +11,26 @@ class UserInfo:
     def __init__(self):
         # init all necessary variables
         self.response_func = None
+        self.response_file_func = None
         self.original_msg = None
         self.response_data = list()
+        self.response_file_lists = list()
         self.xep_0030 = None
         self.xep_0050 = None
+        self.xep_0096 = None
+        self.max_list_entries = 10
+        self.fallback_session = {}
         self.target, self.opt_arg = None, None
 
     # noinspection PyUnusedLocal
     def process(self, queries, target, opt_arg):
         self.xep_0050 = queries['xep_0133'].xmpp['xep_0050']
         self.xep_0030 = queries['xep_0030']
+        self.xep_0096 = queries['xep_0096']
         self.response_func = queries['response_func']
         self.original_msg = queries['original_msg']
         self.response_data = list()
+        self.max_list_entries = queries['max_list_entries']
 
         queries['xep_0133'].get_registered_users_num(jid=target, session={
             'next': self.command_start,
@@ -112,7 +119,18 @@ class UserInfo:
             self.response_data.append(" ")
 
         if session['command'] == 'get-online-users':
-            self.fallback_onlineusers_ejabberd(session)
+            # fallback for get-online-users in ejabberd
+            logging.debug("fallback method for ejabberd for get online user list")
+            self.fallback_session = {
+                'command': 'get-online-users',
+                'send_response': session['send_response']
+            }
+            self.xep_0030.get_items(
+                jid=session['target'],
+                node='online users',
+                callback=self.fallback_onlineusers_ejabberd_callback_handler
+            )
+            session['send_response'] = False
         else:
             self.response_data.append("%s" % error_text)
 
@@ -124,26 +142,39 @@ class UserInfo:
         # handler is provided.
         self.xep_0050.terminate_command(session)
 
-    def fallback_onlineusers_ejabberd(self, session):
-        """
-        fallback for get-online-users in ejabberd
-        """
-        logging.debug("fallback method for ejabberd for get online user list")
-
-        self.xep_0030.get_items(
-            jid=session['target'],
-            node='online users',
-            callback=self.fallback_onlineusers_ejabberd_callback_handler
-        )
-
     def fallback_onlineusers_ejabberd_callback_handler(self, iq):
-        # noinspection HttpUrlsUsage
-        response = iq.xml.findall(".//{http://jabber.org/protocol/disco#items}item")
-        for user in response:
-            user_jid = user.get("jid")
-            user_split = user_jid.split("/")
-            user_name = user_split[0]
-            user_app = user_split[1].split(".")[0]
-            self.response_data.append("%s using %s" % (user_name, user_app))
 
-        self.response_func(self.response_data, self.original_msg)
+        session = self.fallback_session
+        self.fallback_session = {}
+        # error check
+        response_type = iq.xml.get('type')
+        logging.error("Session data: %s" % session)
+
+        if response_type == 'result':
+            # noinspection HttpUrlsUsage
+            response = iq.xml.findall(".//{http://jabber.org/protocol/disco#items}item")
+            user_list = list()
+            for user in response:
+                user_jid = user.get("jid")
+                user_split = user_jid.split("/")
+                user_name = user_split[0]
+                user_app = user_split[1].split(".")[0]
+                user_entry = "%s using %s" % (user_name, user_app)
+                user_list.append(user_entry)
+            send_list = list(user_list)
+            if len(send_list) > self.max_list_entries:
+                del send_list[self.max_list_entries:]
+                file = "\n".join(user_list)
+                logging.error("File Content:\n%s" % file)
+            for user in send_list:
+                self.response_data.append(user)
+
+        else:
+            # noinspection HttpUrlsUsage
+            response = iq.xml.findall(".//{urn:ietf:params:xml:ns:xmpp-stanzas}text")
+            for error in response:
+                self.response_data.append("%s: %s" % (session['command'], error.text))
+
+        if session['send_response']:
+            self.response_func(self.response_data, self.original_msg)
+            # self.response_file_func(self.response_file_lists, self.original_msg)
