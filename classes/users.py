@@ -148,7 +148,6 @@ class UserInfo:
         self.fallback_session = {}
         # error check
         response_type = iq.xml.get('type')
-        logging.error("Session data: %s" % session)
 
         if response_type == 'result':
             # noinspection HttpUrlsUsage
@@ -168,12 +167,13 @@ class UserInfo:
                 logging.error("File Content:\n%s" % file)
             for user in send_list:
                 self.response_data.append(user)
-
         else:
-            # noinspection HttpUrlsUsage
-            response = iq.xml.findall(".//{urn:ietf:params:xml:ns:xmpp-stanzas}text")
+            response = iq.xml.findall(".//{jabber:client}error")
             for error in response:
-                self.response_data.append("%s: %s" % (session['command'], error.text))
+                if len(error) > 0:
+                    error_type = error[0].tag.partition('}')[2]
+                    error_text = error.find(".//{urn:ietf:params:xml:ns:xmpp-stanzas}text").text
+                    self.response_data.append("%s: %s %s" % (session['command'], error_type, error_text))
 
         if session['send_response']:
             self.response_func(self.response_data, self.original_msg)
