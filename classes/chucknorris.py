@@ -1,9 +1,9 @@
 # coding=utf-8
-import urllib3
-import requests
-
-from random import randint
 from html.parser import HTMLParser
+from random import randint
+
+import requests
+import urllib3
 
 
 class ChuckNorrisParser(HTMLParser):

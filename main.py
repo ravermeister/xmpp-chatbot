@@ -8,29 +8,38 @@
 
 	See the file LICENSE for copying permission.
 """
-import slixmpp
-import ssl
 import configparser
 import logging
-
+import os
+import ssl
+import sys
 from argparse import ArgumentParser
-from slixmpp.exceptions import XMPPError
+from typing import Optional, Dict, List
+
+import slixmpp
+import slixmpp_omemo
+from omemo.exceptions import MissingBundleException
+from slixmpp import JID
+from slixmpp.exceptions import XMPPError, IqError, IqTimeout
+from slixmpp_omemo import PluginCouldNotLoad, MissingOwnKey, UndecidedException, EncryptionPrepareException
 
 import common.misc as misc
-from common.strings import StaticAnswers
-from classes.servercontact import ServerContact
-from classes.version import Version
-from classes.uptime import LastActivity
-from classes.xep import XEPRequest
-from classes.info import ServerInfo
-from classes.users import UserInfo
-from classes.manpage import ManPageRequest
 from classes.chucknorris import ChuckNorrisRequest
+from classes.info import ServerInfo
+from classes.manpage import ManPageRequest
+from classes.servercontact import ServerContact
+from classes.uptime import LastActivity
+from classes.users import UserInfo
+from classes.version import Version
+from classes.xep import XEPRequest
+from common.strings import StaticAnswers
 
 
 class QueryBot(slixmpp.ClientXMPP):
+
 	def __init__(self, jid, password, room, nick, reply_private=False, admin_command_users="", max_list_entries=10):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
+		self.eme_ns = "eu.siacs.conversations.axolotl"
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
 		self.room = room
 		self.nick = nick
@@ -76,7 +85,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				# self.plugin['xep_0045'].join_muc_wait(rooms, self.nick, maxstanzas=0)
 				self.plugin['xep_0045'].join_muc(rooms, self.nick)
 
-	def send_response(self, reply_data, original_msg):
+	async def send_response(self, reply_data, original_msg):
 
 		nick_added = False
 		# add pre predefined text to reply list
@@ -98,7 +107,7 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			# if msg type is groupchat and reply private is False prepend mucnick
 			if original_msg["type"] == "groupchat" and self.reply_private is False and nick_added is False:
-				reply_data[0] = "%s: " % original_msg["mucnick"] + reply_data[0]
+				reply_data[0] = "%s: %s" % (original_msg["mucnick"], reply_data[0])
 			# if msg type is groupchat and reply private is True answer as with private message
 			# do NOT use bare jid for receiver
 			elif original_msg["type"] == "groupchat" and self.reply_private is True:
@@ -108,8 +117,65 @@ class QueryBot(slixmpp.ClientXMPP):
 			elif original_msg['type'] == "chat":
 				msg_to = original_msg['from']
 
-			# reply = misc.deduplicate(reply)
-			self.send_message(msg_to, mbody="\n".join(reply_data), mtype=msg_type)
+			# send omemo encrypted message, if we received an encrypted message
+			if self['xep_0384'].is_encrypted(original_msg):
+				await self.send_encrypted_message(reply_data, msg_to, msg_type)
+			else:
+				self.send_message(msg_to, mbody="\n".join(reply_data), mtype=msg_type)
+
+	async def send_encrypted_message(self, reply_data, msg_to, msg_type):
+
+		msg = self.make_message(mto=msg_to, mtype=msg_type)
+		msg['eme']['namespace'] = self.eme_ns
+		msg['eme']['name'] = self['xep_0380'].mechanisms[self.eme_ns]
+
+		# noinspection PyTypeChecker
+		expect_problems = {}  # type: Optional[Dict[JID, List[int]]]
+		retry = True
+		while retry:
+			try:
+				recipients = [msg_to]
+				encrypted_msg = await self['xep_0384'].encrypt_message(
+					"\n".join(reply_data), recipients, expect_problems
+				)
+				msg.append(encrypted_msg)
+				msg.send()
+				retry = False
+			except UndecidedException as exn:
+				# The library prevents us from sending a message to an
+				# untrusted/undecided barejid, so we need to make a decision here.
+				# This is where you prompt your user to ask what to do. In
+				# this bot we will automatically trust undecided recipients.
+				await self['xep_0384'].trust(exn.bare_jid, exn.device, exn.ik)
+			# TODO: catch NoEligibleDevicesException
+			except EncryptionPrepareException as exn:
+				# This exception is being raised when the library has tried
+				# all it could and doesn't know what to do anymore. It
+				# contains a list of exceptions that the user must resolve, or
+				# explicitely ignore via `expect_problems`.
+				# TODO: We might need to bail out here if errors are the same?
+				for error in exn.errors:
+					if isinstance(error, MissingBundleException):
+						# We choose to ignore MissingBundleException. It seems
+						# to be somewhat accepted that it's better not to
+						# encrypt for a device if it has problems and encrypt
+						# for the rest, rather than error out. The "faulty"
+						# device won't be able to decrypt and should display a
+						# generic message. The receiving end-user at this
+						# point can bring up the issue if it happens.
+						logging.warning(
+							"Could not find keys for device >%s< of recipient >%s<. Skipping"
+							% (error.device, error.bare_jid)
+						)
+						jid = JID(error.bare_jid)
+						device_list = expect_problems.setdefault(jid, [])
+						device_list.append(error.device)
+			except (IqError, IqTimeout) as exn:
+				logging.error('An error occurred while fetching information on a recipient.\n%r' % exn)
+				retry = False
+			except Exception as exn:
+				logging.error('An error occurred while attempting to encrypt.\n%r' % exn)
+				retry = False
 
 	async def message(self, msg):
 		"""
@@ -125,7 +191,19 @@ class QueryBot(slixmpp.ClientXMPP):
 		if msg['mucnick'] == self.nick:
 			return
 
-		data = self.build_queue(data, msg)
+		# decrypt message if it was omemo encrypted
+		if self['xep_0384'].is_encrypted(msg):
+			try:
+				encrypted = msg['omemo_encrypted']
+				decrypted = await self['xep_0384'].decrypt_message(encrypted, msg['from'], True)
+				msg['body'] = decrypted.decode('utf8')
+			except (MissingOwnKey,):
+				# The message is missing our own key, it was not encrypted for
+				# us, and we can't decrypt it.
+				logging.warning("Message not encrypted for me.")
+				return
+
+		data = self.build_queue(data, msg['body'])
 		keyword_occurred = False
 		# queue
 		for job in data['queue']:
@@ -190,13 +268,13 @@ class QueryBot(slixmpp.ClientXMPP):
 		if not reply_data and keyword_occurred:
 			return
 
-		self.send_response(data['reply'], msg)
+		await self.send_response(data['reply'], msg)
 
 	# noinspection PyMethodMayBeStatic
-	def build_queue(self, data, msg):
+	def build_queue(self, data, msg_body):
 		# building the queue
 		# double splitting to exclude whitespaces
-		data['words'] = " ".join(msg['body'].split()).split(sep=" ")
+		data['words'] = " ".join(msg_body.split()).split(sep=" ")
 		wordcount = len(data["words"])
 
 		# check all words in side the message for possible hits
@@ -255,6 +333,7 @@ if __name__ == '__main__':
 	args.reply_private = ("yes" == config.get('General', 'reply_private'))
 	args.admin_command_users = config.get('General', 'admin_command_users')
 	args.max_list_entries = int(config.get('General', 'max_list_entries'))
+	args.data_dir = config.get('General', 'data_dir')
 
 	args.jid = config.get('Account', 'jid')
 
@@ -274,6 +353,19 @@ if __name__ == '__main__':
 	xmpp.register_plugin('xep_0128')  # Service Discovery Extensions
 	xmpp.register_plugin('xep_0199')  # XMPP Ping
 	xmpp.register_plugin('xep_0133')  # Service Administration
+	xmpp.register_plugin('xep_0380')  # Explicit Message Encryption
+
+	# Ensure OMEMO data dir is created
+	os.makedirs(args.data_dir, exist_ok=True)
+	try:
+		xmpp.register_plugin(
+			'xep_0384', {
+				'data_dir': args.data_dir,
+			}, module=slixmpp_omemo,
+		)  # OMEMO Encryption
+	except (PluginCouldNotLoad,):
+		logger.exception('An error occurred when loading the omemo plugin.')
+		sys.exit(1)
 
 	# connect and start receiving stanzas
 	xmpp.connect()

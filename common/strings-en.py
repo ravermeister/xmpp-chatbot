@@ -64,7 +64,8 @@ class StaticAnswers:
 
     def gen_answer(self):
         possible_answers = self.possible_answers
-        return possible_answers[str(randint(1, possible_answers.__len__()))] % self.nickname
+        nick_with_suffix = "%s:" % self.nickname
+        return possible_answers[str(randint(1, possible_answers.__len__()))] % nick_with_suffix
 
     def error(self, code):
         try:

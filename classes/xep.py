@@ -1,7 +1,8 @@
 # coding=utf-8
 import os
-import requests
+
 import defusedxml.ElementTree as Et
+import requests
 
 
 class XEPRequest:

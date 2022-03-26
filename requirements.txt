@@ -1,5 +1,7 @@
-slixmpp>=1.7.1
+slixmpp==1.8.1
+slixmpp-omemo>=0.6.1
+omemo>=0.14.0
 defusedxml>=0.5.0
 requests>=2.19.1
 validators>=0.12.2
-urllib3>=1.26.8
+urllib3==1.26.9

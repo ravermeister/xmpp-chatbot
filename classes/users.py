@@ -1,4 +1,5 @@
 # coding=utf-8
+import asyncio
 import logging
 
 
@@ -125,11 +126,22 @@ class UserInfo:
                 'command': 'get-online-users',
                 'send_response': session['send_response']
             }
-            self.xep_0030.get_items(
-                jid=session['target'],
-                node='online users',
-                callback=self.fallback_onlineusers_ejabberd_callback_handler
+            fallback_task = asyncio.create_task(
+                self.xep_0030.get_items(
+                    jid=session['target'],
+                    node='online users',
+                    callback=self.fallback_onlineusers_ejabberd_callback_handler
+                )
             )
+
+            def ignore_coroutine_error(task: asyncio.Task) -> None:
+                # noinspection PyBroadException
+                try:
+                    task.result()
+                except Exception:
+                    pass
+            fallback_task.add_done_callback(ignore_coroutine_error)
+
             session['send_response'] = False
         else:
             self.response_data.append("%s" % error_text)

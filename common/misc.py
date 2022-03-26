@@ -1,5 +1,6 @@
 # coding=utf-8
 import validators
+
 from common.strings import StaticAnswers
 
 

@@ -19,6 +19,10 @@ Note for display registered/online Users The Bot need's admin privileges on the 
 As [XEP-0133](https://xmpp.org/extensions/xep-0133.html) is used 
 
 ### install
+#### System Requirements
+for the Slixmpp OMEMO Plugin you need `python.h` on ubuntu with python3 run
+`apt install python3-dev`
+
 #### virtualenv
 With virtualenv it is possible to run the bot inside a virtual environment without disrupting other python processes
  and or dependencies. This repo comes with a `requirements.txt` to make the installation process as easy as possible.
@@ -45,6 +49,8 @@ reply_private=no
 admin_command_users=user@domain.tld
 # how many items should be posted in list responses before sending a file.
 max_list_entries=10
+# where to store omemo keys
+data-dir=/home/raver/Entwicklung/xmpp-chatbot/data 
 
 [Account]
 jid=nick@domain.tld/querybot
