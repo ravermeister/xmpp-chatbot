@@ -279,7 +279,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			# The message is missing our own key, it was not encrypted for
 			# us, and we can't decrypt it.
 			logging.warning("Message not encrypted for me.")
-		except (NoAvailableSession,) as exn:
+		except NoAvailableSession:
 			# We received a message from that contained a session that we
 			# don't know about (deleted session storage, etc.). We can't
 			# decrypt the message, and it's going to be lost.
