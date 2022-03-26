@@ -22,7 +22,7 @@ from omemo.exceptions import MissingBundleException
 from slixmpp import JID
 from slixmpp.exceptions import XMPPError, IqError, IqTimeout
 from slixmpp_omemo import PluginCouldNotLoad, MissingOwnKey, UndecidedException, EncryptionPrepareException
-from slixmpp_omemo import NoAvailableSession
+from slixmpp_omemo import NoAvailableSession, UntrustedException
 
 import common.misc as misc
 from classes.chucknorris import ChuckNorrisRequest
@@ -142,7 +142,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				msg.append(encrypted_msg)
 				msg.send()
 				retry = False
-			except UndecidedException as exn:
+			except (UndecidedException, UntrustedException) as exn:
 				# The library prevents us from sending a message to an
 				# untrusted/undecided barejid, so we need to make a decision here.
 				# This is where you prompt your user to ask what to do. In
