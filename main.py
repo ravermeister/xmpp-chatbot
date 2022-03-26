@@ -275,7 +275,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			# used for example to send heartbeats to other devices.
 			if decrypted is not None:
 				return decrypted.decode('utf8')
-		except (MissingOwnKey,):
+		except MissingOwnKey:
 			# The message is missing our own key, it was not encrypted for
 			# us, and we can't decrypt it.
 			logging.warning("Message not encrypted for me.")
