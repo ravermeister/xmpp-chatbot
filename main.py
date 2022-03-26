@@ -22,6 +22,7 @@ from omemo.exceptions import MissingBundleException
 from slixmpp import JID
 from slixmpp.exceptions import XMPPError, IqError, IqTimeout
 from slixmpp_omemo import PluginCouldNotLoad, MissingOwnKey, UndecidedException, EncryptionPrepareException
+from slixmpp_omemo import NoAvailableSession
 
 import common.misc as misc
 from classes.chucknorris import ChuckNorrisRequest
@@ -193,15 +194,10 @@ class QueryBot(slixmpp.ClientXMPP):
 
 		# decrypt message if it was omemo encrypted
 		if self['xep_0384'].is_encrypted(msg):
-			try:
-				encrypted = msg['omemo_encrypted']
-				decrypted = await self['xep_0384'].decrypt_message(encrypted, msg['from'], True)
-				msg['body'] = decrypted.decode('utf8')
-			except (MissingOwnKey,):
-				# The message is missing our own key, it was not encrypted for
-				# us, and we can't decrypt it.
-				logging.warning("Message not encrypted for me.")
+			msg_decrypted = await self.decrypt_message(msg)
+			if msg_decrypted is None:
 				return
+			msg['body'] = msg_decrypted
 
 		data = self.build_queue(data, msg['body'])
 		keyword_occurred = False
@@ -270,7 +266,42 @@ class QueryBot(slixmpp.ClientXMPP):
 
 		await self.send_response(data['reply'], msg)
 
-	# noinspection PyMethodMayBeStatic
+	async def decrypt_message(self, msg):
+		try:
+			encrypted = msg['omemo_encrypted']
+			decrypted = await self['xep_0384'].decrypt_message(encrypted, msg['from'], True)
+			# decrypt_message returns Optional[str]. It is possible to get
+			# body-less OMEMO message (see KeyTransportMessages), currently
+			# used for example to send heartbeats to other devices.
+			if decrypted is not None:
+				return decrypted.decode('utf8')
+		except (MissingOwnKey,):
+			# The message is missing our own key, it was not encrypted for
+			# us, and we can't decrypt it.
+			logging.warning("Message not encrypted for me.")
+		except (NoAvailableSession,) as exn:
+			# We received a message from that contained a session that we
+			# don't know about (deleted session storage, etc.). We can't
+			# decrypt the message, and it's going to be lost.
+			# Here, as we need to initiate a new encrypted session, it is
+			# best if we send an encrypted message directly. XXX: Is it
+			# where we talk about self-healing messages?
+			logging.warning('Error: Message uses an encrypted session I don\'t know about.')
+			await self.send_encrypted_message(
+				'Error: Message uses an encrypted session I don\'t know about.',
+				msg['from'],
+				msg['type']
+			)
+		except EncryptionPrepareException:
+			# Slixmpp tried its best, but there were errors it couldn't
+			# resolve. At this point you should have seen other exceptions
+			# and given a chance to resolve them already.
+			logging.warning('Error: I was not able to decrypt the message.')
+
+		except (Exception,) as exn:
+			logging.warning('Error: Exception occurred while attempting decryption.\n%r' % exn)
+
+# noinspection PyMethodMayBeStatic
 	def build_queue(self, data, msg_body):
 		# building the queue
 		# double splitting to exclude whitespaces
