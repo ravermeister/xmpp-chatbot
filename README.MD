@@ -8,7 +8,7 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - query xmpp server uptime [XEP-0012](https://xmpp.org/extensions/xep-0012.html)
 - query xmpp server contact addresses [XEP-0157](https://xmpp.org/extensions/xep-0157.html)
 - display a summary of all the above
-- display amount of registered and online users
+- display information about registered and online users [XEP-0133](https://xmpp.org/extensions/xep-0133.html)
 - display information about XEP from the [XSF extensions website](https://xmpp.org/extensions/)
 - display help output
 - respond to username being mentioned
@@ -26,8 +26,8 @@ With virtualenv it is possible to run the bot inside a virtual environment witho
 cd to_the_path/of_the_bot/
 mkdir ./venv
 
-# link the correct (localized) 'common/strings_*.py' file to 'common/strings.py'
-ln -s common/strings_de.py common/strings.py
+# link the correct (localized) 'common/strings-*.py' file to 'common/strings.py'
+ln -s common/strings-de.py common/strings.py
 
 # create the virtual environment
 virtualenv -p $(which python3) ./venv
@@ -43,6 +43,8 @@ Replace the dummy `bot.cfg` file, filled with correct credentials/ parameters.
 reply_private=no
 # list user who are allowed to call admin Commands e.g. "!user"
 admin_command_users=user@domain.tld
+# how many items should be posted in list responses before sending a file.
+max_list_entries=10
 
 [Account]
 jid=nick@domain.tld/querybot

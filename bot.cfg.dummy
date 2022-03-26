@@ -3,6 +3,8 @@
 reply_private=no
 # list user who are allowed to call admin Commands e.g. "!user"
 admin_command_users=user@domain.tld
+# how many items should be posted in list responses before sending a file.
+max_list_entries=10
 
 [Account]
 jid=nick@domain.tld/querybot

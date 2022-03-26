@@ -29,7 +29,7 @@ from classes.chucknorris import ChuckNorrisRequest
 
 
 class QueryBot(slixmpp.ClientXMPP):
-	def __init__(self, jid, password, room, nick, reply_private=False, admin_command_users=""):
+	def __init__(self, jid, password, room, nick, reply_private=False, admin_command_users="", max_list_entries=10):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
 		self.room = room
@@ -37,6 +37,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		self.use_message_ids = True
 		self.reply_private = reply_private
 		self.admin_users = admin_command_users.split(sep=",")
+		self.max_list_entries = max_list_entries
 
 		self.functions = {
 			"!uptime": LastActivity(),
@@ -168,8 +169,11 @@ class QueryBot(slixmpp.ClientXMPP):
 				elif keyword == "!user":
 					keyword_occurred = True
 					queries['xep_0133'] = self['xep_0133']
+					queries['xep_0030'] = self['xep_0030']
+					queries['xep_0096'] = self['xep_0096']
 					queries['response_func'] = self.send_response
 					queries['original_msg'] = msg
+					queries['max_list_entries'] = self.max_list_entries
 					self.functions[keyword].process(queries=queries, target=target, opt_arg=opt_arg)
 					continue
 			except XMPPError as error:
@@ -250,23 +254,26 @@ if __name__ == '__main__':
 
 	args.reply_private = ("yes" == config.get('General', 'reply_private'))
 	args.admin_command_users = config.get('General', 'admin_command_users')
+	args.max_list_entries = int(config.get('General', 'max_list_entries'))
+
 	args.jid = config.get('Account', 'jid')
+
 	args.password = config.get('Account', 'password')
 	args.room = config.get('MUC', 'rooms')
 	args.nick = config.get('MUC', 'nick')
 
 	# init the bot and register used slixmpp plugins
-	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private, args.admin_command_users)
+	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private, args.admin_command_users, args.max_list_entries)
 	xmpp.register_plugin('xep_0012')  # Last Activity
 	xmpp.register_plugin('xep_0030')  # Service Discovery
 	xmpp.register_plugin('xep_0045')  # Multi-User Chat
 	xmpp.register_plugin('xep_0060')  # PubSub
 	xmpp.register_plugin('xep_0085')  # Chat State Notifications
 	xmpp.register_plugin('xep_0092')  # Software Version
+	xmpp.register_plugin('xep_0096')  # XEP-0096: SI File Transfer
 	xmpp.register_plugin('xep_0128')  # Service Discovery Extensions
 	xmpp.register_plugin('xep_0199')  # XMPP Ping
 	xmpp.register_plugin('xep_0133')  # Service Administration
-	# xmpp.register_plugin('xep_0050')  # Ad-Hoc Commands
 
 	# connect and start receiving stanzas
 	xmpp.connect()
