@@ -50,7 +50,7 @@ admin_command_users=user@domain.tld
 # how many items should be posted in list responses before sending a file.
 max_list_entries=10
 # where to store omemo keys
-data-dir=/home/raver/Entwicklung/xmpp-chatbot/data 
+data_dir=/home/raver/Entwicklung/xmpp-chatbot/data 
 
 [Account]
 jid=nick@domain.tld/querybot
