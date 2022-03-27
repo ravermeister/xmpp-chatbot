@@ -40,7 +40,9 @@ class QueryBot(slixmpp.ClientXMPP):
 
 	def __init__(self, jid, password, room, nick, reply_private=False, admin_command_users="", max_list_entries=10):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
-		self.eme_ns = "eu.siacs.conversations.axolotl"
+		self.eme_ns_legacy = "eu.siacs.conversations.axolotl"
+		self.eme_ns = "urn:xmpp:omemo:0"
+
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
 		self.room = room
 		self.nick = nick
@@ -120,22 +122,29 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			# send omemo encrypted message, if we received an encrypted message
 			if self['xep_0384'].is_encrypted(original_msg):
+				msg_to = original_msg['from']
 				await self.send_encrypted_message(reply_data, msg_to, msg_type)
 			else:
 				self.send_message(msg_to, mbody="\n".join(reply_data), mtype=msg_type)
 
 	async def send_encrypted_message(self, reply_data, msg_to, msg_type):
+		if msg_type == 'groupchat':
+			room = msg_to.bare
+			msg = self.make_message(mto=room, mtype=msg_type)
+			recipients = [JID(self['xep_0045'].get_jid_property(room, user, 'jid'))
+					for user in self['xep_0045'].get_roster(room)]  # if user not in self.jid
+		else:
+			msg = self.make_message(mto=msg_to, mtype=msg_type)
+			recipients = [msg_to]
 
-		msg = self.make_message(mto=msg_to, mtype=msg_type)
-		msg['eme']['namespace'] = self.eme_ns
-		msg['eme']['name'] = self['xep_0380'].mechanisms[self.eme_ns]
+		msg['eme']['namespace'] = self.eme_ns_legacy
+		msg['eme']['name'] = self['xep_0380'].mechanisms[self.eme_ns_legacy]
 
 		# noinspection PyTypeChecker
 		expect_problems = {}  # type: Optional[Dict[JID, List[int]]]
 		retry = True
 		while retry:
 			try:
-				recipients = [msg_to]
 				encrypted_msg = await self['xep_0384'].encrypt_message(
 					"\n".join(reply_data), recipients, expect_problems
 				)
@@ -187,7 +196,6 @@ class QueryBot(slixmpp.ClientXMPP):
 			'reply': list(),
 			'queue': list()
 		}
-
 		# catch self messages to prevent self flooding
 		if msg['mucnick'] == self.nick:
 			return
@@ -288,7 +296,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			# where we talk about self-healing messages?
 			logging.warning('Error: Message uses an encrypted session I don\'t know about.')
 			await self.send_encrypted_message(
-				'Error: Message uses an encrypted session I don\'t know about.',
+				['Error: Message uses an encrypted session I don\'t know about.'],
 				msg['from'],
 				msg['type']
 			)
@@ -300,6 +308,8 @@ class QueryBot(slixmpp.ClientXMPP):
 
 		except (Exception,) as exn:
 			logging.warning('Error: Exception occurred while attempting decryption.\n%r' % exn)
+
+		logging.warning("Error: Exception occurred while attempting decryption")
 
 # noinspection PyMethodMayBeStatic
 	def build_queue(self, data, msg_body):
