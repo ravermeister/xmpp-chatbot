@@ -137,9 +137,6 @@ class QueryBot(slixmpp.ClientXMPP):
 			msg = self.make_message(mto=msg_to, mtype=msg_type)
 			recipients = [msg_to]
 
-		msg['eme']['namespace'] = self.eme_ns_legacy
-		msg['eme']['name'] = self['xep_0380'].mechanisms[self.eme_ns_legacy]
-
 		# noinspection PyTypeChecker
 		expect_problems = {}  # type: Optional[Dict[JID, List[int]]]
 		retry = True
@@ -277,7 +274,13 @@ class QueryBot(slixmpp.ClientXMPP):
 	async def decrypt_message(self, msg):
 		try:
 			encrypted = msg['omemo_encrypted']
-			decrypted = await self['xep_0384'].decrypt_message(encrypted, msg['from'], True)
+			if msg['type'] == 'groupchat':
+				room = msg['from'].bare
+				user = msg['from'].resource
+				msg_from = JID(self['xep_0045'].get_jid_property(room, user, 'jid'))
+				decrypted = await self['xep_0384'].decrypt_message(encrypted, msg_from, True)
+			else:
+				decrypted = await self['xep_0384'].decrypt_message(encrypted, msg['from'], True)
 			# decrypt_message returns Optional[str]. It is possible to get
 			# body-less OMEMO message (see KeyTransportMessages), currently
 			# used for example to send heartbeats to other devices.
