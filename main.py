@@ -123,16 +123,22 @@ class QueryBot(slixmpp.ClientXMPP):
 			# send omemo encrypted message, if we received an encrypted message
 			if self['xep_0384'].is_encrypted(original_msg):
 				msg_to = original_msg['from']
-				await self.send_encrypted_message(reply_data, msg_to, msg_type)
+				await self.send_encrypted_message(reply_data, msg_to, original_msg['type'], msg_type)
 			else:
 				self.send_message(msg_to, mbody="\n".join(reply_data), mtype=msg_type)
 
-	async def send_encrypted_message(self, reply_data, msg_to, msg_type):
-		if msg_type == 'groupchat':
+	async def send_encrypted_message(self, reply_data, msg_to, msg_src_type, msg_type):
+		if msg_src_type == 'groupchat':
 			room = msg_to.bare
-			msg = self.make_message(mto=room, mtype=msg_type)
-			recipients = [JID(self['xep_0045'].get_jid_property(room, user, 'jid'))
-					for user in self['xep_0045'].get_roster(room)]  # if user not in self.jid
+			if msg_type == 'chat':
+				user = msg_to.resource
+				user_jid = JID(self['xep_0045'].get_jid_property(room, user, 'jid'))
+				msg = self.make_message(mto=user_jid, mtype=msg_type)
+				recipients = [user_jid]
+			else:
+				msg = self.make_message(mto=room, mtype=msg_type)
+				recipients = [JID(self['xep_0045'].get_jid_property(room, user, 'jid'))
+						for user in self['xep_0045'].get_roster(room)]  # if user not in self.jid
 		else:
 			msg = self.make_message(mto=msg_to, mtype=msg_type)
 			recipients = [msg_to]
@@ -300,6 +306,7 @@ class QueryBot(slixmpp.ClientXMPP):
 			logging.warning('Error: Message uses an encrypted session I don\'t know about.')
 			await self.send_encrypted_message(
 				['Error: Message uses an encrypted session I don\'t know about.'],
+				msg['from'],
 				msg['from'],
 				msg['type']
 			)
