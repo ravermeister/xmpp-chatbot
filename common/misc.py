@@ -1,7 +1,8 @@
 # coding=utf-8
 import validators
-
 from common.strings import StaticAnswers
+
+staticAnswers: StaticAnswers
 
 
 def deduplicate(reply):
@@ -30,7 +31,7 @@ def validate(keyword, target):
     max_arg_string_length = 256
 
     # if keyword in domain_keywords list
-    if keyword in StaticAnswers().keys('domain_keywords'):
+    if keyword in staticAnswers.keys('domain_keywords'):
         # if target is a domain / email return True
         return (
                 target is not None
@@ -39,7 +40,7 @@ def validate(keyword, target):
                 and (validators.domain(target) or validators.email(target))
         )
     # check if keyword is in number_keyword list
-    elif keyword in StaticAnswers().keys('number_keywords'):
+    elif keyword in staticAnswers.keys('number_keywords'):
         # prevent AttributeError if target is NoneType
         return (
                 target is not None
@@ -50,11 +51,11 @@ def validate(keyword, target):
         )
 
     # if keyword is in no_arg_keywords list return True
-    elif keyword in StaticAnswers().keys("no_arg_keywords"):
+    elif keyword in staticAnswers.keys("no_arg_keywords"):
         return True
 
     # check if keyword is in string_keyword list
-    elif keyword in StaticAnswers().keys("string_keywords"):
+    elif keyword in staticAnswers.keys("string_keywords"):
         return (
                 target is not None
                 and target.strip() is not None

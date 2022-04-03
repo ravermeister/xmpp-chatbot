@@ -1,6 +1,6 @@
 # coding=utf-8
 
-lang = "english"
+language = "english"
 
 help_file = {
     'help': '!help -- display this text',
@@ -25,4 +25,19 @@ error_messages = {
     '1': 'not reachable',
     '2': 'not a valid target',
     '3': 'you are not allowed to execute the command %s'
+}
+command_messages = {
+    'uptime.running': "%s is running for %s",
+    'uptime.year': "Year",
+    'uptime.years': "Years",
+    'uptime.week': "Week",
+    'uptime.weeks': "Weeks",
+    'uptime.day': "Day",
+    'uptime.days': "Days",
+    'uptime.hour': "Hour",
+    'uptime.hours': "Hours",
+    'uptime.minute': "Minute",
+    'uptime.minutes': "Minutes",
+    'uptime.second': "Second",
+    'uptime.seconds': "Seconds"
 }

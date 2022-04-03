@@ -2,6 +2,8 @@
 import asyncio
 import logging
 
+from common.strings import StaticAnswers
+
 
 class UserInfo:
     """
@@ -9,8 +11,9 @@ class UserInfo:
     such as online users and registered users
     """
 
-    def __init__(self):
+    def __init__(self, static_answers: StaticAnswers):
         # init all necessary variables
+        self.static_answers = static_answers
         self.response_func = None
         self.response_file_func = None
         self.original_msg = None

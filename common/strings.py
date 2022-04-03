@@ -1,4 +1,6 @@
 # coding=utf-8
+
+import logging
 from importlib import import_module
 from random import randint
 
@@ -9,12 +11,9 @@ class StaticAnswers:
     """
 
     # noinspection PyUnresolvedReferences
-    def __init__(self, lang="en"):
-        self.lang = import_module("language.%s" % lang)
-
-        self.help_file = self.lang.help_file
-        self.possible_answers = self.lang.possible_answers
-        self.error_messages = self.lang.error_messages
+    def __init__(self, locale="en"):
+        self.lang = import_module("lang.%s" % locale)
+        logging.info("loaded language: %s" % self.lang.language)
 
         self.keywords = {
             "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
@@ -33,26 +32,29 @@ class StaticAnswers:
         # in any other case return the whole dict
         return self.keywords["keywords"]
 
+    # noinspection PyUnresolvedReferences
     def gen_help(self, from_user, admin_users, admin_functions):
         admin_functions = [key[1:] for key in admin_functions]
         # noinspection DuplicatedCode
-        help_items = self.help_file.items()
+        help_items = self.lang.help_file.items()
         if from_user not in admin_users and from_user.bare not in admin_users:
             # remove admin commands from help
-            filtered_keys = [key for key in self.help_file.keys() if key not in admin_functions]
-            help_items = {key: self.help_file[key] for key in filtered_keys}.items()
+            filtered_keys = [key for key in self.lang.help_file.keys() if key not in admin_functions]
+            help_items = {key: self.lang.help_file[key] for key in filtered_keys}.items()
 
         help_doc = "\n".join(['%s' % value for (_, value) in help_items])
         return help_doc
 
+    # noinspection PyUnresolvedReferences
     def gen_answer(self, nickname=""):
-        possible_answers = self.possible_answers
+        possible_answers = self.lang.possible_answers
         nick_with_suffix = "%s:" % nickname
         return possible_answers[str(randint(1, possible_answers.__len__()))] % nick_with_suffix
 
+    # noinspection PyUnresolvedReferences
     def error(self, code):
         try:
-            text = self.error_messages[str(code)]
+            text = self.lang.error_messages[str(code)]
         except KeyError:
             return 'unknown error'
         return text

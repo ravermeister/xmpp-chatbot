@@ -49,7 +49,7 @@ max_list_entries=10
 # where to store omemo keys
 data_dir=/home/raver/Entwicklung/xmpp-chatbot/data 
 # which language the bot should speak, currently en|de is supported
-language=de
+locale=de
 
 [Account]
 jid=nick@domain.tld/querybot

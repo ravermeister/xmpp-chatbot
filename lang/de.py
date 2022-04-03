@@ -1,6 +1,6 @@
 # coding=utf-8
 
-lang = "deutsch"
+language = "deutsch"
 
 help_file = {
     'help': '!help -- diese Hilfe Anzeigen',
@@ -28,4 +28,19 @@ error_messages = {
     '1': 'nicht erreichbar',
     '2': 'kein gültiges Ziel',
     '3': 'Sie dürfen den Befehl %s nicht ausführen'
+}
+command_messages = {
+    'uptime.running': "%s läuft seit %s",
+    'uptime.year': "Jahr",
+    'uptime.years': "Jahre",
+    'uptime.week': "Woche",
+    'uptime.weeks': "Wochen",
+    'uptime.day': "Tagen",
+    'uptime.days': "Tagen",
+    'uptime.hour': "Stunde",
+    'uptime.hours': "Stunden",
+    'uptime.minute': "Minute",
+    'uptime.minutes': "Minuten",
+    'uptime.second': "Sekunde",
+    'uptime.seconds': "Sekunden"
 }

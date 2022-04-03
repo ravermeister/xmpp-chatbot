@@ -1,26 +1,32 @@
 # coding=utf-8
+from common.strings import StaticAnswers
+
 # XEP-0012: Last Activity
+
+
 class LastActivity:
 	"""
 	query the server uptime of the specified domain, defined by XEP-0012
 	"""
-	def __init__(self):
+	def __init__(self, static_answers: StaticAnswers):
 		# init all necessary variables
 		self.last_activity = None
 		self.target, self.opt_arg = None, None
+		self.staticAnswers = static_answers
 
 	def process(self, granularity=4):
 		seconds = self.last_activity['last_activity']['seconds']
 		uptime = []
+		messages = self.staticAnswers.lang.command_messages
 
 		# tuple with displayable time sections
 		intervals = (
-			('years', 31536000),  # 60 * 60 * 24 * 365
-			('weeks', 604800),  # 60 * 60 * 24 * 7
-			('days', 86400),  # 60 * 60 * 24
-			('hours', 3600),  # 60 * 60
-			('minutes', 60),
-			('seconds', 1)
+			(messages['uptime.years'], 31536000),  # 60 * 60 * 24 * 365
+			(messages['uptime.weeks'], 604800),  # 60 * 60 * 24 * 7
+			(messages['uptime.days'], 86400),  # 60 * 60 * 24
+			(messages['uptime.hours'], 3600),  # 60 * 60
+			(messages['uptime.minutes'], 60),
+			(messages['uptime.seconds'], 1)
 		)
 
 		# for every element in possible time section process the seconds
@@ -34,9 +40,7 @@ class LastActivity:
 		result = ' '.join(uptime[:granularity])
 
 		# insert values into result string
-		text = "%s is running for %s" % (self.target, result)
-
-		return text
+		return messages['uptime.running'] % (self.target, result)
 
 	def format(self, queries, target, opt_arg):
 		self.last_activity = queries['xep_0012']
@@ -44,5 +48,4 @@ class LastActivity:
 		self.target = target
 		self.opt_arg = opt_arg
 
-		reply = self.process()
-		return reply
+		return self.process()

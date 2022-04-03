@@ -1,16 +1,18 @@
 # coding=utf-8
 import os
-
 import defusedxml.ElementTree as Et
 import requests
+
+from common.strings import StaticAnswers
 
 
 class XEPRequest:
 	"""
 	class which requests the header of the referenced xep
 	"""
-	def __init__(self):
+	def __init__(self, static_answers: StaticAnswers):
 		# init all necessary variables
+		self.static_answers = static_answers
 		self.reqxep, self.opt_arg = None, None
 
 		self.xeplist = None
@@ -108,6 +110,7 @@ class XEPRequest:
 
 		return result
 
+	# noinspection PyUnusedLocal
 	def format(self, queries, target, opt_arg):
 		"""
 		:param queries:

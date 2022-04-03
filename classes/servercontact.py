@@ -1,5 +1,6 @@
 # coding=utf-8
 import defusedxml.ElementTree as Et
+from common.strings import StaticAnswers
 
 
 # XEP-0157: Contact Addresses for XMPP Services
@@ -7,7 +8,8 @@ class ServerContact:
 	"""
 	plugin to process the server contact addresses from a disco query
 	"""
-	def __init__(self):
+	def __init__(self, static_answers: StaticAnswers):
+		self.staticAnswers = static_answers
 		# init all necessary variables
 		self.possible_vars = [
 			'abuse-addresses',

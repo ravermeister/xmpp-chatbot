@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+from common.strings import StaticAnswers
 
 
 # XEP-0072: Server Version
@@ -7,8 +8,9 @@ class Version:
 	process and format a version query
 	"""
 
-	def __init__(self):
+	def __init__(self, static_answers: StaticAnswers):
 		# init all necessary variables
+		self.static_answers = static_answers
 		self.software_version = None
 		self.target, self.opt_arg = None, None
 

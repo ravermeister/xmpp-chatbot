@@ -38,30 +38,30 @@ from common.strings import StaticAnswers
 
 class QueryBot(slixmpp.ClientXMPP):
 
-	def __init__(self, jid, password, room, nick,
-			reply_private=False, admin_command_users="", max_list_entries=10, language="en"):
-		slixmpp.ClientXMPP.__init__(self, jid, password)
+	def __init__(self, params):
+		slixmpp.ClientXMPP.__init__(self, params.jid, params.password)
 		self.eme_ns_legacy = "eu.siacs.conversations.axolotl"
 		self.eme_ns = "urn:xmpp:omemo:0"
 
 		self.ssl_version = ssl.PROTOCOL_TLSv1_2
-		self.room = room
-		self.nick = nick
+		self.room = params.room
+		self.nick = params.nick
 		self.use_message_ids = True
-		self.reply_private = reply_private
-		self.admin_users = admin_command_users.split(sep=",")
-		self.max_list_entries = max_list_entries
-		self.staticAnswers = StaticAnswers(language)
+		self.reply_private = params.reply_private
+		self.admin_users = params.admin_command_users.split(sep=",")
+		self.max_list_entries = params.max_list_entries
+		self.staticAnswers = StaticAnswers(params.locale)
+		misc.staticAnswers = self.staticAnswers
 
 		self.functions = {
-			"!uptime": LastActivity(),
-			"!contact": ServerContact(),
-			"!version": Version(),
-			"!info": ServerInfo(),
-			"!user": UserInfo(),
-			"!xep": XEPRequest(),
-			"!man": ManPageRequest(),
-			"!chuck": ChuckNorrisRequest()
+			"!uptime": LastActivity(self.staticAnswers),
+			"!contact": ServerContact(self.staticAnswers),
+			"!version": Version(self.staticAnswers),
+			"!info": ServerInfo(self.staticAnswers),
+			"!user": UserInfo(self.staticAnswers),
+			"!xep": XEPRequest(self.staticAnswers),
+			"!man": ManPageRequest(self.staticAnswers),
+			"!chuck": ChuckNorrisRequest(self.staticAnswers)
 		}
 		self.admin_functions = [
 			"!user"
@@ -224,14 +224,14 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			if keyword == '!help':
 				keyword_occurred = True
-				data['reply'].append(StaticAnswers().gen_help(msg['from'], self.admin_users, self.admin_functions))
+				data['reply'].append(self.staticAnswers.gen_help(msg['from'], self.admin_users, self.admin_functions))
 				continue
 			# user is not allowed to call admin Commands
 			elif keyword in self.admin_functions \
 				and msg['from'] not in self.admin_users \
 				and msg['from'].bare not in self.admin_users:
 				keyword_occurred = True
-				data['reply'].append(StaticAnswers().error(3) % keyword)
+				data['reply'].append(self.staticAnswers.error(3) % keyword)
 				continue
 
 			try:
@@ -337,11 +337,11 @@ class QueryBot(slixmpp.ClientXMPP):
 			keyword = x[1]
 
 			# match all words starting with ! and member of no_arg_keywords
-			if keyword.startswith("!") and keyword in StaticAnswers().keys("no_arg_keywords"):
+			if keyword.startswith("!") and keyword in self.staticAnswers.keys("no_arg_keywords"):
 				data['queue'].append({keyword: [None, None]})
 
 			# matching all words starting with ! and member of keywords
-			elif keyword.startswith("!") and keyword in StaticAnswers().keys("keywords"):
+			elif keyword.startswith("!") and keyword in self.staticAnswers.keys("keywords"):
 				# init variables to circumvent IndexErrors
 				target, opt_arg = None, None
 
@@ -387,7 +387,7 @@ if __name__ == '__main__':
 	args.admin_command_users = config.get('General', 'admin_command_users')
 	args.max_list_entries = int(config.get('General', 'max_list_entries'))
 	args.data_dir = config.get('General', 'data_dir')
-	args.locale = config.get('General', 'language')
+	args.locale = config.get('General', 'locale')
 
 	args.jid = config.get('Account', 'jid')
 
@@ -396,8 +396,8 @@ if __name__ == '__main__':
 	args.nick = config.get('MUC', 'nick')
 
 	# init the bot and register used slixmpp plugins
-	xmpp = QueryBot(args.jid, args.password, args.room, args.nick,
-					args.reply_private, args.admin_command_users, args.max_list_entries, args.language)
+	xmpp = QueryBot(args)
+
 	xmpp.register_plugin('xep_0012')  # Last Activity
 	xmpp.register_plugin('xep_0030')  # Service Discovery
 	xmpp.register_plugin('xep_0045')  # Multi-User Chat

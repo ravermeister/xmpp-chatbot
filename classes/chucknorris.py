@@ -1,6 +1,7 @@
 # coding=utf-8
 from html.parser import HTMLParser
 from random import randint
+from common.strings import StaticAnswers
 
 import requests
 import urllib3
@@ -39,8 +40,9 @@ class ChuckNorrisRequest:
     > retrieve a ChuckNorris Joke
     """
 
-    def __init__(self):
+    def __init__(self, static_answers: StaticAnswers):
         # init all necessary variables
+        self.static_answers = static_answers
         self.target, self.opt_arg = None, None
         self.api_en_1 = "https://api.icndb.com/jokes/random"
         self.api_en_2 = "https://api.chucknorris.io/jokes/random"
@@ -78,6 +80,7 @@ class ChuckNorrisRequest:
         except Exception as error:
             return "Fehler beim Aufruf der Chuck Norris API: %s" % error
 
+    # noinspection PyUnusedLocal
     def format(self, queries, target, opt_arg):
         self.target = target
         self.opt_arg = opt_arg
