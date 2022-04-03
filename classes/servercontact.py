@@ -112,6 +112,6 @@ class ServerContact:
 
 			# if opt_arg is present and member of possible_vars but the key is empty change text line
 			if self.opt_arg in self.possible_vars:
-				text = "%s for %s are not defined." % (self.opt_arg, self.target)
+				text = messages['contact.not-defined'] % (self.opt_arg, self.target)
 
 		return text
