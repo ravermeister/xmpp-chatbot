@@ -95,20 +95,20 @@ class ServerContact:
 		self.opt_arg = opt_arg
 
 		result = self.process()
-
+		messages = self.staticAnswers.lang.command_messages
 		# if result is present continue
 		if result:
-			text = "contact addresses for %s are\n" % self.target
+			text = messages['contact.addresses'] % self.target
 
 			# if opt_arg is present and member of possible_vars change text line
 			if self.opt_arg in self.possible_vars:
-				text = "%s for %s are\n" % (self.opt_arg, self.target)
+				text = messages['contact.for'] % (self.opt_arg, self.target)
 
 			for key in result.keys():
 				addr = ' , '.join(result[key])
 				text += "- %s : %s\n" % (key, addr)
 		else:
-			text = "%s has no contact addresses configured." % self.target
+			text = messages['contact.not-configured'] % self.target
 
 			# if opt_arg is present and member of possible_vars but the key is empty change text line
 			if self.opt_arg in self.possible_vars:

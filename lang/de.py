@@ -42,5 +42,10 @@ command_messages = {
     'uptime.minute': "Minute",
     'uptime.minutes': "Minuten",
     'uptime.second': "Sekunde",
-    'uptime.seconds': "Sekunden"
+    'uptime.seconds': "Sekunden",
+
+    'contact.addresses': "Kontakt Adressen für %s sind\n",
+    'contact.for': "%s für %s sind\n",
+    'contact.not-configured': "%s hat keine Kontakt Adresse konfiguriert.",
+    'contact.not-defined': "%s für %s sind nicht definiert."
 }
