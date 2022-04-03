@@ -10,11 +10,11 @@ class StaticAnswers:
 
     # noinspection PyUnresolvedReferences
     def __init__(self, lang="en"):
-        lang = import_module("language.%s" % lang)
+        self.lang = import_module("language.%s" % lang)
 
-        self.help_file = lang.help_file
-        self.possible_answers = lang.possible_answers
-        self.error_messages = lang.error_messages
+        self.help_file = self.lang.help_file
+        self.possible_answers = self.lang.possible_answers
+        self.error_messages = self.lang.error_messages
 
         self.keywords = {
             "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
