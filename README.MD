@@ -30,9 +30,6 @@ With virtualenv it is possible to run the bot inside a virtual environment witho
 cd to_the_path/of_the_bot/
 mkdir ./venv
 
-# link the correct (localized) 'common/strings-*.py' file to 'common/strings.py'
-ln -s common/strings-de.py common/strings.py
-
 # create the virtual environment
 virtualenv -p $(which python3) ./venv
 source ./venv/bin/activate
@@ -51,6 +48,8 @@ admin_command_users=user@domain.tld
 max_list_entries=10
 # where to store omemo keys
 data_dir=/home/raver/Entwicklung/xmpp-chatbot/data 
+# which language the bot should speak, currently en|de is supported
+language=de
 
 [Account]
 jid=nick@domain.tld/querybot

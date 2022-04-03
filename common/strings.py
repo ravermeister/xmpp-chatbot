@@ -1,4 +1,5 @@
 # coding=utf-8
+from importlib import import_module
 from random import randint
 
 
@@ -7,32 +8,14 @@ class StaticAnswers:
     collection of callable static/ semi-static strings
     """
 
-    def __init__(self, nick=""):
-        self.nickname = nick
-        self.help_file = {
-            'help': '!help -- display this text',
-            'version': '!version domain.tld  -- receive XMPP server version',
-            'uptime': '!uptime domain.tld -- receive XMPP server uptime',
-            'contact': '!contact domain.tld -- receive XMPP server contact address info',
-            'info': '!info domain.tld -- receive a summary of the informations mentioned above',
-            'user': '!user domain.tld -- display amount of registered/online user',
-            'xep': '!xep XEP Number -- receive information about the specified XEP',
-            'man': '!man manpage -- receive information about the specified man page',
-            'chuck': '!chuck en -- tell a Chuck Norris Joke'
-        }
-        self.possible_answers = {
-            '1': 'I heard that, %s.',
-            '2': 'I am sorry for that %s.',
-            '3': '%s did you try turning it off and on again?',
-            '4': '%s have a nice day',
-            '5': 'howdy %s',
-            '6': '%s may the force be with you'
-        }
-        self.error_messages = {
-            '1': 'not reachable',
-            '2': 'not a valid target',
-            '3': 'you are not allowed to execute the command %s'
-        }
+    # noinspection PyUnresolvedReferences
+    def __init__(self, lang="en"):
+        lang = import_module("language.%s" % lang)
+
+        self.help_file = lang.help_file
+        self.possible_answers = lang.possible_answers
+        self.error_messages = lang.error_messages
+
         self.keywords = {
             "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
             "domain_keywords": ["!uptime", "!version", "!contact", "!info", "!user"],
@@ -62,9 +45,9 @@ class StaticAnswers:
         help_doc = "\n".join(['%s' % value for (_, value) in help_items])
         return help_doc
 
-    def gen_answer(self):
+    def gen_answer(self, nickname=""):
         possible_answers = self.possible_answers
-        nick_with_suffix = "%s:" % self.nickname
+        nick_with_suffix = "%s:" % nickname
         return possible_answers[str(randint(1, possible_answers.__len__()))] % nick_with_suffix
 
     def error(self, code):

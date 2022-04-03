@@ -38,7 +38,8 @@ from common.strings import StaticAnswers
 
 class QueryBot(slixmpp.ClientXMPP):
 
-	def __init__(self, jid, password, room, nick, reply_private=False, admin_command_users="", max_list_entries=10):
+	def __init__(self, jid, password, room, nick,
+			reply_private=False, admin_command_users="", max_list_entries=10, language="en"):
 		slixmpp.ClientXMPP.__init__(self, jid, password)
 		self.eme_ns_legacy = "eu.siacs.conversations.axolotl"
 		self.eme_ns = "urn:xmpp:omemo:0"
@@ -50,6 +51,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		self.reply_private = reply_private
 		self.admin_users = admin_command_users.split(sep=",")
 		self.max_list_entries = max_list_entries
+		self.staticAnswers = StaticAnswers(language)
 
 		self.functions = {
 			"!uptime": LastActivity(),
@@ -94,10 +96,10 @@ class QueryBot(slixmpp.ClientXMPP):
 		# add pre predefined text to reply list
 		if not reply_data:
 			if self.nick in original_msg['body'] and not original_msg['type'] == "chat":
-				reply_data.append(StaticAnswers(original_msg['mucnick']).gen_answer())
+				reply_data.append(self.staticAnswers.gen_answer(original_msg['mucnick']))
 				nick_added = True
 			elif original_msg['type'] == "chat":
-				reply_data.append(StaticAnswers(original_msg['mucnick']).gen_answer())
+				reply_data.append(self.staticAnswers.gen_answer(original_msg['mucnick']))
 
 		# remove None type from list and send all elements
 		reply_data = list(filter(None, reply_data))
@@ -385,6 +387,7 @@ if __name__ == '__main__':
 	args.admin_command_users = config.get('General', 'admin_command_users')
 	args.max_list_entries = int(config.get('General', 'max_list_entries'))
 	args.data_dir = config.get('General', 'data_dir')
+	args.locale = config.get('General', 'language')
 
 	args.jid = config.get('Account', 'jid')
 
@@ -393,7 +396,8 @@ if __name__ == '__main__':
 	args.nick = config.get('MUC', 'nick')
 
 	# init the bot and register used slixmpp plugins
-	xmpp = QueryBot(args.jid, args.password, args.room, args.nick, args.reply_private, args.admin_command_users, args.max_list_entries)
+	xmpp = QueryBot(args.jid, args.password, args.room, args.nick,
+					args.reply_private, args.admin_command_users, args.max_list_entries, args.language)
 	xmpp.register_plugin('xep_0012')  # Last Activity
 	xmpp.register_plugin('xep_0030')  # Service Discovery
 	xmpp.register_plugin('xep_0045')  # Multi-User Chat
