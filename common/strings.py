@@ -13,7 +13,7 @@ class StaticAnswers:
     # noinspection PyUnresolvedReferences
     def __init__(self, locale="en"):
         self.lang = import_module("lang.%s" % locale)
-        logging.info("loaded language: %s" % self.lang.language)
+        logging.debug("loaded language: %s" % self.lang.language)
 
         self.keywords = {
             "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
