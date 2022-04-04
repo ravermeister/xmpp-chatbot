@@ -18,11 +18,13 @@ class Version:
 		# list of all possible opt_arg
 		possible_opt_args = ["version", "os", "name"]
 
+		messages = self.static_answers.lang.command_messages
+
 		name = self.software_version['name']
 		version = self.software_version['version']
 		os = self.software_version['os']
 		if not os:
-			os = 'an unknown platform'
+			os = messages['version.unknown-os']
 
 		# if opt_arg is given member of possible_opt_args list return that element
 		if self.opt_arg in possible_opt_args:
@@ -30,7 +32,7 @@ class Version:
 
 		# otherwise, return full version string
 		else:
-			text = "%s is running %s version %s on %s" % (self.target, name, version, os)
+			text = messages['version.running-on'] % (self.target, name, version, os)
 
 		return text
 

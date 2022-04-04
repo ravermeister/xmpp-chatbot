@@ -53,4 +53,7 @@ command_messages = {
     'users.invalid-data': "ungültige Daten in der Antwort erhalten",
     'users.online': "Online Benutzer: %s",
     'users.using': "%s verwendet %s",
+
+    'version.unknown-os': "einem unbekannten System",
+    'version.running-on': "%s läuft mit %s Version %s auf %s"
 }
