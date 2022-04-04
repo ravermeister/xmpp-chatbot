@@ -130,21 +130,18 @@ class UserInfo:
                 'command': 'get-online-users',
                 'send_response': session['send_response']
             }
-            fallback_task = asyncio.create_task(
-                self.xep_0030.get_items(
-                    jid=session['target'],
-                    node='online users',
-                    callback=self.fallback_onlineusers_ejabberd_callback_handler
-                )
-            )
 
-            def ignore_coroutine_error(task: asyncio.Task) -> None:
+            async def fallback():
                 # noinspection PyBroadException
                 try:
-                    task.result()
+                    await self.xep_0030.get_items(
+                        jid=session['target'],
+                        node='online users',
+                        callback=self.fallback_onlineusers_ejabberd_callback_handler
+                    )
                 except Exception:
                     pass
-            fallback_task.add_done_callback(ignore_coroutine_error)
+            asyncio.create_task(fallback())
 
             session['send_response'] = False
         else:
@@ -159,7 +156,6 @@ class UserInfo:
         self.xep_0050.terminate_command(session)
 
     def fallback_onlineusers_ejabberd_callback_handler(self, iq):
-
         session = self.fallback_session
         self.fallback_session = {}
         # error check
@@ -193,5 +189,12 @@ class UserInfo:
                     self.response_data.append("%s: %s %s" % (session['command'], error_type, error_text))
 
         if session['send_response']:
-            self.response_func(self.response_data, self.original_msg)
+            async def send_response_task():
+                # noinspection PyBroadException
+                try:
+                    await self.response_func(self.response_data, self.original_msg)
+                except Exception:
+                    pass
+            asyncio.create_task(send_response_task())
+
             # self.response_file_func(self.response_file_lists, self.original_msg)

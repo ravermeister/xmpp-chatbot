@@ -49,7 +49,7 @@ command_messages = {
     'contact.not-configured': "%s hat keine Kontakt Adresse konfiguriert.",
     'contact.not-defined': "%s für %s sind nicht definiert.",
 
-    'users.registered': "Registered Users: %s",
+    'users.registered': "Registrierte Benutzer: %s",
     'users.invalid-data': "ungültige Daten in der Antwort erhalten",
     'users.online': "Online Benutzer: %s",
     'users.using': "%s verwendet %s",
