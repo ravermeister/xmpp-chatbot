@@ -44,5 +44,10 @@ command_messages = {
     'contact.addresses': "contact addresses for %s are\n",
     'contact.for': "%s for %s are\n",
     'contact.not-configured': "%s has no contact addresses configured.",
-    'contact.not-defined': "%s for %s are not defined."
+    'contact.not-defined': "%s for %s are not defined.",
+
+    'users.registered': "Registered Users: %s",
+    'users.invalid-data': "received invalid data in response",
+    'users.online': "Online Users: %s",
+    'users.using': "%s using %s",
 }

@@ -75,25 +75,26 @@ class UserInfo:
             self.response_data.append(" ")
 
         logging.debug("Command handler for: '%s'" % session['command'])
+        messages = self.static_answers.lang.command_messages
 
         if session['command'] == 'get-registered-users-num':
             # noinspection SpellCheckingInspection
             registered_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='registeredusersnum']/{jabber:x:data}value")
             if registered_users_elems:
                 registered_users_num = registered_users_elems[0].text
-                self.response_data.append("Registered Users: %s" % registered_users_num)
+                self.response_data.append(messages['users.registered'] % registered_users_num)
             else:
                 logging.warning("received invalid data in response for xep_0133 - get-registered-users-num")
-                self.response_data.append("received invalid data in response")
+                self.response_data.append(messages['users.invalid-data'])
         elif session['command'] == 'get-online-users-num':
             # noinspection SpellCheckingInspection
             online_users_elems = iq.xml.findall(".//{jabber:x:data}field[@var='onlineusersnum']/{jabber:x:data}value")
             if online_users_elems:
                 online_users_num = online_users_elems[0].text
-                self.response_data.append("Online Users: %s" % online_users_num)
+                self.response_data.append(messages['users.online'] % online_users_num)
             else:
                 logging.warning("received invalid data in response for xep_0133 - get-online-users-num")
-                self.response_data.append("received invalid data in response")
+                self.response_data.append(messages['users.invalid-data'])
         elif session['command'] == 'get-online-users':
             logging.debug("online user list response: %s" % iq.xml)
 
@@ -163,6 +164,7 @@ class UserInfo:
         self.fallback_session = {}
         # error check
         response_type = iq.xml.get('type')
+        messages = self.static_answers.lang.command_messages
 
         if response_type == 'result':
             # noinspection HttpUrlsUsage
@@ -173,7 +175,7 @@ class UserInfo:
                 user_split = user_jid.split("/")
                 user_name = user_split[0]
                 user_app = user_split[1].split(".")[0]
-                user_entry = "%s using %s" % (user_name, user_app)
+                user_entry = messages['users.using'] % (user_name, user_app)
                 user_list.append(user_entry)
             send_list = list(user_list)
             if len(send_list) > self.max_list_entries:
