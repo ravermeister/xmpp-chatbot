@@ -76,6 +76,7 @@ class XEPRequest:
 
 		# check if xeplist is accurate
 		self.req_xeplist()
+		messages = self.static_answers.lang.command_messages
 
 		result = list()
 		# if requested number is member of acceptedxeps continue
@@ -96,7 +97,7 @@ class XEPRequest:
 					if query is not None:
 						result.append("%s : %s" % (query.tag, query.text))
 					else:
-						result.append("%s does not have a %s tag." % (self.reqxep, self.opt_arg))
+						result.append(messages['xep.no-tag'] % (self.reqxep, self.opt_arg))
 
 				# in any other case return the general answer
 				else:
@@ -106,7 +107,7 @@ class XEPRequest:
 
 		# if the requested number is no member of acceptedxeps and/or not accepted return error.
 		else:
-			result.append("XEP-%s : is not available." % self.reqxep)
+			result.append(messages['xep.unavailable'] % self.reqxep)
 
 		return result
 

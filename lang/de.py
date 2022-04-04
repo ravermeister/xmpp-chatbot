@@ -55,5 +55,8 @@ command_messages = {
     'users.using': "%s verwendet %s",
 
     'version.unknown-os': "einem unbekannten System",
-    'version.running-on': "%s läuft mit %s Version %s auf %s"
+    'version.running-on': "%s läuft mit %s Version %s auf %s",
+
+    'xep.no-tag': "%s hat keinen %s tag.",
+    'xep.unavailable': "XEP-%s : ist nicht verfügbar."
 }
