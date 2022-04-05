@@ -21,12 +21,12 @@ class LastActivity:
 
 		# tuple with displayable time sections
 		intervals = (
-			(messages['uptime.years'], 31536000),  # 60 * 60 * 24 * 365
-			(messages['uptime.weeks'], 604800),  # 60 * 60 * 24 * 7
-			(messages['uptime.days'], 86400),  # 60 * 60 * 24
-			(messages['uptime.hours'], 3600),  # 60 * 60
-			(messages['uptime.minutes'], 60),
-			(messages['uptime.seconds'], 1)
+			('uptime.years', 31536000),  # 60 * 60 * 24 * 365
+			('uptime.weeks', 604800),  # 60 * 60 * 24 * 7
+			('uptime.days', 86400),  # 60 * 60 * 24
+			('uptime.hours', 3600),  # 60 * 60
+			('uptime.minutes', 60),
+			('uptime.seconds', 1)
 		)
 
 		# for every element in possible time section process the seconds
@@ -36,7 +36,7 @@ class LastActivity:
 				seconds -= value * count
 				if value == 1:
 					name = name.rstrip('s')
-				uptime.append("{} {}".format(value, name))
+				uptime.append("{} {}".format(value, messages[name]))
 		result = ' '.join(uptime[:granularity])
 
 		# insert values into result string
