@@ -35,7 +35,7 @@ command_messages = {
     'uptime.years': "Jahre",
     'uptime.week': "Woche",
     'uptime.weeks': "Wochen",
-    'uptime.day': "Tagen",
+    'uptime.day': "Tag",
     'uptime.days': "Tagen",
     'uptime.hour': "Stunde",
     'uptime.hours': "Stunden",
