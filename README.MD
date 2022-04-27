@@ -48,7 +48,7 @@ admin_command_users=user@domain.tld
 max_list_entries=10
 # where to store omemo keys
 data_dir=/home/raver/Entwicklung/xmpp-chatbot/data 
-# which language the bot should speak, currently en|de is supported
+# which language the bot should speak, currently en|de|nl is supported
 locale=de
 
 [Account]
@@ -58,7 +58,6 @@ password=super_secret_password
 [MUC]
 rooms=room_to_connect_to@conference.domain.tld,another_room@conference.domain.tld
 nick=mucnickname
-
 ````
 ##### systemd
 Note, currently the scripts assume that the repo is stored in `/usr/local/share/xmpp-chatbot`
