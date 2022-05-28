@@ -19,6 +19,7 @@ from typing import Optional, Dict, List
 import slixmpp
 import slixmpp_omemo
 from omemo.exceptions import MissingBundleException
+from omemo.exceptions import KeyExchangeException
 from slixmpp import JID
 from slixmpp.exceptions import XMPPError, IqError, IqTimeout
 from slixmpp_omemo import PluginCouldNotLoad, MissingOwnKey, UndecidedException, EncryptionPrepareException
@@ -167,7 +168,7 @@ class QueryBot(slixmpp.ClientXMPP):
 				# This exception is being raised when the library has tried
 				# all it could and doesn't know what to do anymore. It
 				# contains a list of exceptions that the user must resolve, or
-				# explicitely ignore via `expect_problems`.
+				# explicitly ignore via `expect_problems`.
 				# TODO: We might need to bail out here if errors are the same?
 				for error in exn.errors:
 					if isinstance(error, MissingBundleException):
@@ -185,6 +186,24 @@ class QueryBot(slixmpp.ClientXMPP):
 						jid = JID(error.bare_jid)
 						device_list = expect_problems.setdefault(jid, [])
 						device_list.append(error.device)
+					elif isinstance(error, KeyExchangeException):
+						# We choose to ignore KeyExchangeException. It seems
+						# to be somewhat accepted that it's better not to
+						# encrypt for a device if it has problems and encrypt
+						# for the rest, rather than error out. The "faulty"
+						# device won't be able to decrypt and should display a
+						# generic message. The receiving end-user at this
+						# point can bring up the issue if it happens.
+						logging.warning(
+							"Could not exchange keys for device >%s< of recipient >%s<. Skipping"
+							% (error.device, error.bare_jid)
+						)
+						jid = JID(error.bare_jid)
+						device_list = expect_problems.setdefault(jid, [])
+						device_list.append(error.device)
+					else:
+						logging.error('An error occurred while fetching information on a recipient.\n%r' % error)
+						retry = False
 			except (IqError, IqTimeout) as exn:
 				logging.error('An error occurred while fetching information on a recipient.\n%r' % exn)
 				retry = False
