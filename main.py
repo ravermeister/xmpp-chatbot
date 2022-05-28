@@ -171,14 +171,17 @@ class QueryBot(slixmpp.ClientXMPP):
 				# explicitly ignore via `expect_problems`.
 				# TODO: We might need to bail out here if errors are the same?
 				for error in exn.errors:
+					# We choose to ignore
+					# - MissingBundleException
+					# - KeyExchangeException
+					# It seems to be somewhat accepted that it's better not to
+					# encrypt for a device if it has problems and encrypt
+					# for the rest, rather than error out. The "faulty"
+					# device won't be able to decrypt and should display a
+					# generic message. The receiving end-user at this
+					# point can bring up the issue if it happens.
+
 					if isinstance(error, MissingBundleException):
-						# We choose to ignore MissingBundleException. It seems
-						# to be somewhat accepted that it's better not to
-						# encrypt for a device if it has problems and encrypt
-						# for the rest, rather than error out. The "faulty"
-						# device won't be able to decrypt and should display a
-						# generic message. The receiving end-user at this
-						# point can bring up the issue if it happens.
 						logging.warning(
 							"Could not find keys for device >%s< of recipient >%s<. Skipping"
 							% (error.device, error.bare_jid)
@@ -187,13 +190,6 @@ class QueryBot(slixmpp.ClientXMPP):
 						device_list = expect_problems.setdefault(jid, [])
 						device_list.append(error.device)
 					elif isinstance(error, KeyExchangeException):
-						# We choose to ignore KeyExchangeException. It seems
-						# to be somewhat accepted that it's better not to
-						# encrypt for a device if it has problems and encrypt
-						# for the rest, rather than error out. The "faulty"
-						# device won't be able to decrypt and should display a
-						# generic message. The receiving end-user at this
-						# point can bring up the issue if it happens.
 						logging.warning(
 							"Could not exchange keys for device >%s< of recipient >%s<. Skipping"
 							% (error.device, error.bare_jid)
