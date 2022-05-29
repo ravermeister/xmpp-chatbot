@@ -18,12 +18,11 @@ from typing import Optional, Dict, List
 
 import slixmpp
 import slixmpp_omemo
-from omemo.exceptions import MissingBundleException
-from omemo.exceptions import KeyExchangeException
 from slixmpp import JID
 from slixmpp.exceptions import XMPPError, IqError, IqTimeout
-from slixmpp_omemo import PluginCouldNotLoad, MissingOwnKey, UndecidedException, EncryptionPrepareException
-from slixmpp_omemo import NoAvailableSession, UntrustedException
+from slixmpp_omemo import PluginCouldNotLoad, MissingOwnKey, UndecidedException, \
+	EncryptionPrepareException, NoAvailableSession, UntrustedException
+
 
 import common.misc as misc
 from classes.chucknorris import ChuckNorrisRequest
@@ -51,18 +50,17 @@ class QueryBot(slixmpp.ClientXMPP):
 		self.reply_private = params.reply_private
 		self.admin_users = params.admin_command_users.split(sep=",")
 		self.max_list_entries = params.max_list_entries
-		self.staticAnswers = StaticAnswers(params.locale)
-		misc.staticAnswers = self.staticAnswers
+		misc.staticAnswers = StaticAnswers(params.locale)
 
 		self.functions = {
-			"!uptime": LastActivity(self.staticAnswers),
-			"!contact": ServerContact(self.staticAnswers),
-			"!version": Version(self.staticAnswers),
-			"!info": ServerInfo(self.staticAnswers),
-			"!user": UserInfo(self.staticAnswers),
-			"!xep": XEPRequest(self.staticAnswers),
-			"!man": ManPageRequest(self.staticAnswers),
-			"!chuck": ChuckNorrisRequest(self.staticAnswers)
+			"!uptime": LastActivity(misc.staticAnswers),
+			"!contact": ServerContact(misc.staticAnswers),
+			"!version": Version(misc.staticAnswers),
+			"!info": ServerInfo(misc.staticAnswers),
+			"!user": UserInfo(misc.staticAnswers),
+			"!xep": XEPRequest(misc.staticAnswers),
+			"!man": ManPageRequest(misc.staticAnswers),
+			"!chuck": ChuckNorrisRequest(misc.staticAnswers)
 		}
 		self.admin_functions = [
 			"!user"
@@ -97,10 +95,10 @@ class QueryBot(slixmpp.ClientXMPP):
 		# add pre predefined text to reply list
 		if not reply_data:
 			if self.nick in original_msg['body'] and not original_msg['type'] == "chat":
-				reply_data.append(self.staticAnswers.gen_answer(original_msg['mucnick']))
+				reply_data.append(misc.staticAnswers.gen_answer(original_msg['mucnick']))
 				nick_added = True
 			elif original_msg['type'] == "chat":
-				reply_data.append(self.staticAnswers.gen_answer(original_msg['mucnick']))
+				reply_data.append(misc.staticAnswers.gen_answer(original_msg['mucnick']))
 
 		# remove None type from list and send all elements
 		reply_data = list(filter(None, reply_data))
@@ -170,36 +168,9 @@ class QueryBot(slixmpp.ClientXMPP):
 				# contains a list of exceptions that the user must resolve, or
 				# explicitly ignore via `expect_problems`.
 				# TODO: We might need to bail out here if errors are the same?
-				for error in exn.errors:
-					# We choose to ignore
-					# - MissingBundleException
-					# - KeyExchangeException
-					# It seems to be somewhat accepted that it's better not to
-					# encrypt for a device if it has problems and encrypt
-					# for the rest, rather than error out. The "faulty"
-					# device won't be able to decrypt and should display a
-					# generic message. The receiving end-user at this
-					# point can bring up the issue if it happens.
-
-					if isinstance(error, MissingBundleException):
-						logging.warning(
-							"Could not find keys for device >%s< of recipient >%s<. Skipping"
-							% (error.device, error.bare_jid)
-						)
-						jid = JID(error.bare_jid)
-						device_list = expect_problems.setdefault(jid, [])
-						device_list.append(error.device)
-					elif isinstance(error, KeyExchangeException):
-						logging.warning(
-							"Could not exchange keys for device >%s< of recipient >%s<. Skipping"
-							% (error.device, error.bare_jid)
-						)
-						jid = JID(error.bare_jid)
-						device_list = expect_problems.setdefault(jid, [])
-						device_list.append(error.device)
-					else:
-						logging.error('An error occurred while fetching information on a recipient.\n%r' % error)
-						retry = False
+				omemo_error = misc.HandleSkipOmemoError(exn)
+				retry = omemo_error.retry
+				expect_problems = omemo_error.expect_problems
 			except (IqError, IqTimeout) as exn:
 				logging.error('An error occurred while fetching information on a recipient.\n%r' % exn)
 				retry = False
@@ -239,14 +210,14 @@ class QueryBot(slixmpp.ClientXMPP):
 
 			if keyword == '!help':
 				keyword_occurred = True
-				data['reply'].append(self.staticAnswers.gen_help(msg['from'], self.admin_users, self.admin_functions))
+				data['reply'].append(misc.staticAnswers.gen_help(msg['from'], self.admin_users, self.admin_functions))
 				continue
 			# user is not allowed to call admin Commands
 			elif keyword in self.admin_functions \
 				and msg['from'] not in self.admin_users \
 				and msg['from'].bare not in self.admin_users:
 				keyword_occurred = True
-				data['reply'].append(self.staticAnswers.error(3) % keyword)
+				data['reply'].append(misc.staticAnswers.error(3) % keyword)
 				continue
 
 			try:
@@ -327,11 +298,11 @@ class QueryBot(slixmpp.ClientXMPP):
 				msg['from'],
 				msg['type']
 			)
-		except EncryptionPrepareException:
+		except EncryptionPrepareException as exn:
 			# Slixmpp tried its best, but there were errors it couldn't
 			# resolve. At this point you should have seen other exceptions
 			# and given a chance to resolve them already.
-			logging.warning('Error: I was not able to decrypt the message.')
+			logging.warning('Error: I was not able to decrypt the message.\n%r' % exn)
 
 		except (Exception,) as exn:
 			logging.warning('Error: Exception occurred while attempting decryption.\n%r' % exn)
@@ -352,11 +323,11 @@ class QueryBot(slixmpp.ClientXMPP):
 			keyword = x[1]
 
 			# match all words starting with ! and member of no_arg_keywords
-			if keyword.startswith("!") and keyword in self.staticAnswers.keys("no_arg_keywords"):
+			if keyword.startswith("!") and keyword in misc.staticAnswers.keys("no_arg_keywords"):
 				data['queue'].append({keyword: [None, None]})
 
 			# matching all words starting with ! and member of keywords
-			elif keyword.startswith("!") and keyword in self.staticAnswers.keys("keywords"):
+			elif keyword.startswith("!") and keyword in misc.staticAnswers.keys("keywords"):
 				# init variables to circumvent IndexErrors
 				target, opt_arg = None, None
 

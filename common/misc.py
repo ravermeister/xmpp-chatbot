@@ -1,6 +1,12 @@
 # coding=utf-8
 import validators
+import logging
+
 from common.strings import StaticAnswers
+from typing import Optional, Dict, List
+from slixmpp import JID
+from slixmpp_omemo import EncryptionPrepareException
+from omemo.exceptions import MissingBundleException, KeyExchangeException
 
 staticAnswers: StaticAnswers
 
@@ -21,7 +27,7 @@ def deduplicate(reply):
 
 def validate(keyword, target):
     """
-    validation method to reduce malformed querys and unnecessary connection attempts
+    validation method to reduce malformed query's and unnecessary connection attempts
     :param keyword: used keyword
     :param target: provided target
     :return: true if valid
@@ -81,5 +87,58 @@ class HandleError:
     def report(self):
         # return the formatted result string to the user
         text = "%s. %s %s resulted in: %s" % (self.text, self.key, self.target, self.condition)
-
         return text
+
+
+class HandleSkipOmemoError:
+    """
+    handle Omemo errors that should be skipped (mark
+    """
+
+    def __init__(self, error: EncryptionPrepareException):
+        # This exception is being raised when the library has tried
+        # all it could and doesn't know what to do anymore. It
+        # contains a list of exceptions that the user must resolve, or
+        # explicitly ignore via `expect_problems`.
+        # TODO: We might need to bail out here if errors are the same?
+
+        # noinspection PyTypeChecker
+        self.expect_problems = {}  # type: Optional[Dict[JID, List[int]]]
+        self.exception = error
+        self.retry = self.__process()
+
+    def __process(self) -> bool:
+        retry = True
+        for error in self.exception.errors:
+            # We choose to ignore
+            # - MissingBundleException
+            # - KeyExchangeException
+            # It seems to be somewhat accepted that it's better not to
+            # encrypt for a device if it has problems and encrypt
+            # for the rest, rather than error out. The "faulty"
+            # device won't be able to decrypt and should display a
+            # generic message. The receiving end-user at this
+            # point can bring up the issue if it happens.
+
+            if isinstance(error, MissingBundleException):
+                logging.warning(
+                    "Could not find keys for device >%s< of recipient >%s<. Skipping"
+                    % (error.device, error.bare_jid)
+                )
+                jid = JID(error.bare_jid)
+                device_list = self.expect_problems.setdefault(jid, [])
+                device_list.append(error.device)
+            elif isinstance(error, KeyExchangeException):
+                logging.warning(
+                    "Could not exchange keys for device >%s< of recipient >%s<. Skipping"
+                    % (error.device, error.bare_jid)
+                )
+                jid = JID(error.bare_jid)
+                device_list = self.expect_problems.setdefault(jid, [])
+                device_list.append(error.device)
+            else:
+                logging.error('An error occurred while fetching information on a recipient.\n%r' % error)
+                retry = False
+                break
+        return retry
+
