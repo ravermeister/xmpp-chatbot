@@ -87,4 +87,4 @@ class ChuckNorrisRequest:
         if self.target == "de":
             return self.reply_de_1()
         else:
-            return self.reply_en_1()
+            return self.reply_en_2()
