@@ -59,7 +59,7 @@ class ChuckNorrisRequest:
     def reply_en_1(self):
         try:
             api_url = self.api_en_1
-            response_json = requests.get(api_url).json()
+            response_json = requests.get(api_url, verify=False).json()
             return response_json["value"]["joke"]
         except Exception as error:
             return "Error Calling Chuck Norris API: %s" % error
@@ -87,4 +87,4 @@ class ChuckNorrisRequest:
         if self.target == "de":
             return self.reply_de_1()
         else:
-            return self.reply_en_2()
+            return self.reply_en_1()
