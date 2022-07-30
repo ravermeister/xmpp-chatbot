@@ -8,6 +8,7 @@
 
 	See the file LICENSE for copying permission.
 """
+import asyncio
 import configparser
 import logging
 import os
@@ -50,6 +51,7 @@ class QueryBot(slixmpp.ClientXMPP):
 		self.reply_private = params.reply_private
 		self.admin_users = params.admin_command_users.split(sep=",")
 		self.max_list_entries = params.max_list_entries
+
 		misc.staticAnswers = StaticAnswers(params.locale)
 
 		self.functions = {
@@ -72,7 +74,15 @@ class QueryBot(slixmpp.ClientXMPP):
 		# register receive handler for both groupchat and normal message events
 		self.add_event_handler('message', self.message)
 
-	# noinspection PyUnusedLocal
+		# register reconnect handler, if the server goes down for a short period
+		self.add_event_handler("disconnected", self.reconnect_handler)
+
+	async def reconnect_handler(self, event):
+		logging.debug("disconnected Event received, waiting 10 seconds before trying to reconnect")
+		await asyncio.sleep(10)
+		logging.warning("disconnected Event received, trying to reconnect")
+		self.connect()
+
 	def start(self, event):
 		"""
 		:param event -- An empty dictionary. The session_start event does not provide any additional data.
