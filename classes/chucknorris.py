@@ -67,10 +67,10 @@ class ChuckNorrisRequest:
         # init all necessary variables
         self.static_answers = static_answers
         self.target, self.opt_arg = None, None
-        # currently unavailable
+        # api_en_1 currently unavailable
         self.api_en_1 = "https://api.icndb.com/jokes/random"
         self.api_en_2 = "https://api.chucknorris.io/jokes/random"
-        # currently unavailable
+        # api_de_1 currently unavailable
         self.api_de_1 = "https://chuck-norris-witze.de"
         self.api_de_2 = "https://www.roundhousekick.de/wp-admin/admin-ajax.php?id=&post_id=0&slug=home&canonical_url=/&posts_per_page=50&page=%s&offset=0&post_type=post&repeater=default&seo_start_page=1&preloaded=false&preloaded_amount=0&order=DESC&orderby=date&action=alm_get_posts&query_type=standard"
 
