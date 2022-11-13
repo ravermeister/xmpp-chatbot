@@ -68,3 +68,7 @@ common/.etag
 .bashrc
 .bash_history
 data
+.local/
+.lesshst
+.gitconfig
+
