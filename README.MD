@@ -20,8 +20,11 @@ As [XEP-0133](https://xmpp.org/extensions/xep-0133.html) is used
 
 ### install
 #### System Requirements
-for the Slixmpp OMEMO Plugin you need `python.h` on ubuntu with python3 run
+for the Slixmpp OMEMO Plugin you need `python.h`. On ubuntu with python3 run
 `apt install python3-dev`
+
+for slixmpp 1.8.3 you need `pkg-config`. On ubuntu run  
+`apt install pkg-config`
 
 #### virtualenv
 With virtualenv it is possible to run the bot inside a virtual environment without disrupting other python processes

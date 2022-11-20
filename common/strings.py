@@ -48,7 +48,10 @@ class StaticAnswers:
     # noinspection PyUnresolvedReferences
     def gen_answer(self, nickname=""):
         possible_answers = self.lang.possible_answers
-        nick_with_suffix = "%s:" % nickname
+        if len(nickname) > 0:
+            nick_with_suffix = "%s:" % nickname
+        else:
+            nick_with_suffix = ""
         return possible_answers[str(randint(1, possible_answers.__len__()))] % nick_with_suffix
 
     # noinspection PyUnresolvedReferences
