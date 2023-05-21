@@ -50,7 +50,6 @@ class QueryBot(slixmpp.ClientXMPP):
         self.reply_private = params.reply_private
         self.admin_users = params.admin_command_users.split(sep=",")
         self.max_list_entries = params.max_list_entries
-        self.omemo_dir = params.data_dir
         misc.staticAnswers = StaticAnswers(params.locale)
 
         self.functions = {
@@ -89,21 +88,6 @@ class QueryBot(slixmpp.ClientXMPP):
         :param event -- An empty dictionary. The session_start event does not provide any additional data.
         """
 
-        # Ensure OMEMO data dir is created
-        os.makedirs(self.omemo_dir, exist_ok=True)
-        try:
-            xmpp.register_plugin(
-                'xep_0384', {
-                    'data_dir': self.omemo_dir,
-                }, module=slixmpp_omemo,
-            )  # OMEMO Encryption
-        except (PluginCouldNotLoad,):
-            logger.exception('An error occurred when loading the omemo plugin.')
-            sys.exit(1)
-
-        self.send_presence()
-        self.get_roster()
-
         # If a room password is needed, use: password=the_room_password
         if self.room:
             for rooms in self.room.split(sep=","):
@@ -112,6 +96,9 @@ class QueryBot(slixmpp.ClientXMPP):
                 # see https://slixmpp.readthedocs.io/en/latest/api/plugins/xep_0045.html?highlight=join_muc_wait#slixmpp.plugins.xep_0045.XEP_0045.join_muc_wait
                 # self.plugin['xep_0045'].join_muc_wait(rooms, self.nick, maxstanzas=0)
                 self.plugin['xep_0045'].join_muc(rooms, self.nick)
+
+        self.send_presence()
+        self.get_roster()
 
     async def send_response(self, reply_data, original_msg):
 
@@ -419,6 +406,18 @@ if __name__ == '__main__':
     xmpp.register_plugin('xep_0199')  # XMPP Ping
     xmpp.register_plugin('xep_0133')  # Service Administration
     xmpp.register_plugin('xep_0380')  # Explicit Message Encryption
+
+    # Ensure OMEMO data dir is created
+    os.makedirs(args.data_dir, exist_ok=True)
+    try:
+        xmpp.register_plugin(
+            'xep_0384', {
+                'data_dir': args.data_dir,
+            }, module=slixmpp_omemo,
+        )  # OMEMO Encryption
+    except (PluginCouldNotLoad,):
+        logger.exception('An error occurred when loading the omemo plugin.')
+        sys.exit(1)
 
     # connect and start receiving stanzas
     xmpp.connect()
