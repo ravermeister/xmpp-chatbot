@@ -51,7 +51,6 @@ class QueryBot(slixmpp.ClientXMPP):
         self.reply_private = params.reply_private
         self.admin_users = params.admin_command_users.split(sep=",")
         self.max_list_entries = params.max_list_entries
-
         misc.staticAnswers = StaticAnswers(params.locale)
 
         self.functions = {
@@ -90,8 +89,6 @@ class QueryBot(slixmpp.ClientXMPP):
         """
         :param event -- An empty dictionary. The session_start event does not provide any additional data.
         """
-        self.send_presence()
-        self.get_roster()
 
         # If a room password is needed, use: password=the_room_password
         if self.room:
@@ -101,6 +98,9 @@ class QueryBot(slixmpp.ClientXMPP):
                 # see https://slixmpp.readthedocs.io/en/latest/api/plugins/xep_0045.html?highlight=join_muc_wait#slixmpp.plugins.xep_0045.XEP_0045.join_muc_wait
                 # self.plugin['xep_0045'].join_muc_wait(rooms, self.nick, maxstanzas=0)
                 self.plugin['xep_0045'].join_muc(rooms, self.nick)
+
+        self.send_presence()
+        self.get_roster()
 
     async def send_response(self, reply_data, original_msg):
 
