@@ -16,11 +16,14 @@ class StaticAnswers:
         logging.debug("loaded language: %s" % self.lang.language)
 
         self.keywords = {
-            "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck"],
+            "keywords": ["!help", "!uptime", "!version", "!contact", "!info", "!user", "!xep", "!man", "!chuck",
+                         "!paste"],
             "domain_keywords": ["!uptime", "!version", "!contact", "!info", "!user"],
             "no_arg_keywords": ["!help"],
             "number_keywords": ["!xep"],
-            "string_keywords": ["!man", "!chuck"]
+            "string_keywords": ["!man", "!chuck"],
+            "raw_msg_keywords": ["!paste"]
+
         }
         self.admin_commands = ["user"]
 

@@ -28,6 +28,7 @@ import common.misc as misc
 from classes.chucknorris import ChuckNorrisRequest
 from classes.info import ServerInfo
 from classes.manpage import ManPageRequest
+from classes.paste import PasteBin
 from classes.servercontact import ServerContact
 from classes.uptime import LastActivity
 from classes.users import UserInfo
@@ -61,7 +62,8 @@ class QueryBot(slixmpp.ClientXMPP):
             "!user": UserInfo(misc.staticAnswers),
             "!xep": XEPRequest(misc.staticAnswers),
             "!man": ManPageRequest(misc.staticAnswers),
-            "!chuck": ChuckNorrisRequest(misc.staticAnswers)
+            "!chuck": ChuckNorrisRequest(misc.staticAnswers),
+            "!paste": PasteBin(misc.staticAnswers)
         }
         self.admin_functions = [
             "!user"
@@ -215,8 +217,16 @@ class QueryBot(slixmpp.ClientXMPP):
         for job in data['queue']:
             keys = list(job.keys())
             keyword = keys[0]
-            target = job[keyword][0]
-            opt_arg = job[keyword][1]
+
+            if len(job[keyword]) >= 1:
+                target = job[keyword][0]
+            else:
+                target = None
+            if len(job[keyword]) >= 2:
+                opt_arg = job[keyword][1]
+            else:
+                opt_arg = None
+
             queries = dict()
 
             if keyword == '!help':
@@ -229,6 +239,9 @@ class QueryBot(slixmpp.ClientXMPP):
                     and msg['from'].bare not in self.admin_users:
                 keyword_occurred = True
                 data['reply'].append(misc.staticAnswers.error(3) % keyword)
+                continue
+            elif keyword in misc.staticAnswers.keys("raw_msg_keywords"):
+                data["reply"].append(self.functions[keyword].format(raw_msg=job[keyword][0]))
                 continue
 
             try:
@@ -336,6 +349,12 @@ class QueryBot(slixmpp.ClientXMPP):
             # match all words starting with ! and member of no_arg_keywords
             if keyword.startswith("!") and keyword in misc.staticAnswers.keys("no_arg_keywords"):
                 data['queue'].append({keyword: [None, None]})
+
+            # matching all words starting with ! and member of raw_msg_keywords
+            elif keyword.startswith("!") and keyword in misc.staticAnswers.keys("raw_msg_keywords"):
+                raw_msg = msg_body[(index + len(keyword) + 1)::]
+                data['queue'].append({str(keyword): [raw_msg]})
+                break
 
             # matching all words starting with ! and member of keywords
             elif keyword.startswith("!") and keyword in misc.staticAnswers.keys("keywords"):

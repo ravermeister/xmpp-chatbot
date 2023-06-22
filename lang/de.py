@@ -11,7 +11,8 @@ help_file = {
     'user': '!user domain.tld -- die anzahl der registrierten/online Benutzer auflisten',
     'xep': '!xep XEP Number -- die Informationen über eine XMPP XEP Spezifikation anzeigen',
     'man': '!man manpage -- einen Link zu der Man Page des angegeben Programms anzeigen',
-    'chuck': '!chuck de -- einen ChuckNorris Witz erzählen'
+    'chuck': '!chuck de -- einen ChuckNorris Witz erzählen',
+    'paste': '!paste -- den Text auf https://termbin.com pasten und die URL erhalten'
 }
 possible_answers = {
     '1': '%s möge die Macht mit dir sein',
