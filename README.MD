@@ -13,6 +13,7 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - display help output
 - respond to username being mentioned
 - query for a link to a man page
+- paste long text to [https://termbin.com](termbin.com) paste long text e.g config files for sharing 
 - tell Chuck Norris jokes
 
 Note for display registered/online Users The Bot need's admin privileges on the Server which is queried.
