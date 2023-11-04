@@ -12,7 +12,8 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - `!xep` display information about XEP from the [XSF extensions website](https://xmpp.org/extensions/)
 - `!help` display help output
 - `!man` query for a link to a man page
-- `!paste` paste long text to [termbin.com](https://termbin.com) e.g. config files for sharing 
+- `!paste` paste long text to [termbin.com](https://termbin.com) e.g. config files for sharing
+- `!pb` paste to custom pastebin instance via pastebin-cli
 - `!chuck <de|en>` tell Chuck Norris jokes
 - respond to username being mentioned
 
