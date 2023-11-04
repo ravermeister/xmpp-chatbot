@@ -4,17 +4,17 @@
 Do not operate this bot on foreign servers. Many servers prohibit the usage of bots on their service.
 
 ### functions
-- query xmpp server software and version [XEP-0092](https://xmpp.org/extensions/xep-0092.html)
-- query xmpp server uptime [XEP-0012](https://xmpp.org/extensions/xep-0012.html)
-- query xmpp server contact addresses [XEP-0157](https://xmpp.org/extensions/xep-0157.html)
-- display a summary of all the above
-- display information about registered and online users [XEP-0133](https://xmpp.org/extensions/xep-0133.html)
-- display information about XEP from the [XSF extensions website](https://xmpp.org/extensions/)
-- display help output
+- `!version` query xmpp server software and version [XEP-0092](https://xmpp.org/extensions/xep-0092.html)
+- `!uptime` query xmpp server uptime [XEP-0012](https://xmpp.org/extensions/xep-0012.html)
+- `!contact` query xmpp server contact addresses [XEP-0157](https://xmpp.org/extensions/xep-0157.html)
+- `!info` display a summary of all the above
+- `!user` display information about registered and online users [XEP-0133](https://xmpp.org/extensions/xep-0133.html)
+- `!xep` display information about XEP from the [XSF extensions website](https://xmpp.org/extensions/)
+- `!help` display help output
+- `!man` query for a link to a man page
+- `!paste` paste long text to [termbin.com](https://termbin.com) e.g. config files for sharing 
+- `!chuck <de|en>` tell Chuck Norris jokes0
 - respond to username being mentioned
-- query for a link to a man page
-- paste long text to [https://termbin.com](termbin.com) e.g config files for sharing 
-- tell Chuck Norris jokes
 
 Note for display registered/online Users The Bot need's admin privileges on the Server which is queried.
 As [XEP-0133](https://xmpp.org/extensions/xep-0133.html) is used 
