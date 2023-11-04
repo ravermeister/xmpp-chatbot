@@ -13,7 +13,7 @@ Do not operate this bot on foreign servers. Many servers prohibit the usage of b
 - `!help` display help output
 - `!man` query for a link to a man page
 - `!paste` paste long text to [termbin.com](https://termbin.com) e.g. config files for sharing 
-- `!chuck <de|en>` tell Chuck Norris jokes0
+- `!chuck <de|en>` tell Chuck Norris jokes
 - respond to username being mentioned
 
 Note for display registered/online Users The Bot need's admin privileges on the Server which is queried.
