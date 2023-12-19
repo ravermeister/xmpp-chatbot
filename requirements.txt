@@ -1,7 +1,7 @@
 slixmpp==1.8.4
 slixmpp-omemo>=0.9.1
-protobuf<4
-omemo<0.15
+protobuf<3.21
+omemo<1
 defusedxml>=0.5.0
 requests>=2.19.1
 validators>=0.12.2
