@@ -40,7 +40,7 @@ from common.strings import StaticAnswers
 class QueryBot(slixmpp.ClientXMPP):
 
     def __init__(self, params):
-        slixmpp.ClientXMPP.__init__(self, params.jid, params.password)
+        slixmpp.ClientXMPP.__init__(self, params.jid, params.password, sasl_mech="SCRAM-SHA-1-PLUS")
         self.eme_ns_legacy = "eu.siacs.conversations.axolotl"
         self.eme_ns = "urn:xmpp:omemo:0"
 
