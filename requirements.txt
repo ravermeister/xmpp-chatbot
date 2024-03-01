@@ -1,4 +1,4 @@
-slixmpp==1.8.4
+slixmpp==1.8.5
 slixmpp-omemo>=0.9.1
 protobuf<3.21
 omemo<1
